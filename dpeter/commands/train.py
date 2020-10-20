@@ -15,10 +15,19 @@ app = typer.Typer()
 
 
 @app.command()
-def train(param_path: Path, serialization_dir: Optional[Path] = None):
+def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: Optional[Path] = None):
     wandb.init(project=PROJECT_NAME)
 
-    params = Params.from_file(str(param_path))
+    if data_dir is None:
+        data_dir = Path("./data")
+
+    params = Params.from_file(
+        str(param_path),
+        ext_vars={
+            "TRAIN_DATA_PATH": str(data_dir / "train.json"),
+            "VALID_DATA_PATH": str(data_dir / "valid.json")
+        }
+    )
     flat_params = params.as_flat_dict()
     wandb.config.update(flat_params)
 
