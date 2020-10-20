@@ -8,7 +8,7 @@ local augmentator = null;
     "type": "peter_reader",
     "image_size": image_size,
     "augmentator": augmentator,
-    "lazy": true
+    "lazy": false
   },
   "validation_dataset_reader": {
     "type": "peter_reader",
