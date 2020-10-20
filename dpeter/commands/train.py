@@ -33,15 +33,23 @@ def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: 
 
     if serialization_dir is None:
         date = datetime.utcnow().strftime('%H%M%S-%d%m')
-        serialization_dir = Path(f'.logs/{date}-{param_path.stem}')
+        serialization_dir = Path(f'./logs/{date}-{param_path.stem}')
 
     train_model(params, str(serialization_dir))
 
-    # TODO: should I add intermediate metrics?
+    metrics_paths = list(serialization_dir.glob("metrics_epoch_*.json"))
+    for i in range(len(metrics_paths)):
+        path = str(serialization_dir / f"metrics_epoch_{i}.json")
+        with open(path) as f:
+            metrics = json.load(f)
+            wandb.log(metrics)
+
     with open(str(serialization_dir / "metrics.json")) as f:
         metrics = json.load(f)
 
-    wandb.log(metrics)
+        for key, val in metrics.items():
+            wandb.run.summary[key] = val
+
     wandb.save(str(serialization_dir / "model.tar.gz"))
 
 
