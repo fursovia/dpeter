@@ -5,6 +5,7 @@ import torch
 from allennlp.data import Vocabulary
 from allennlp.models.model import Model
 from allennlp.nn.regularizers import RegularizerApplicator
+import torchvision.models as models
 
 
 @Model.register("length_classifier")
@@ -16,7 +17,7 @@ class LengthClassifier(Model):
     ) -> None:
         super().__init__(vocab, regularizer)
 
-        self._encoder: torch.nn.Module = None
+        self._encoder = models.mobilenet_v2(pretrained=True)
         self._linear = torch.nn.Linear(self._encoder.get_output_dim(), 1)
         self._loss = torch.nn.MSELoss()
 
