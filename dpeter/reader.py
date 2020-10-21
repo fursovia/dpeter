@@ -64,7 +64,7 @@ class PeterReader(DatasetReader):
         if h > new_h:
             img = cv2.resize(img, (new_h, new_w))
 
-        return 1.0 - img / 255.0
+        return img / 255.0
 
     def text_to_instance(
         self,
