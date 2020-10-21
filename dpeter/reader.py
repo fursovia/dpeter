@@ -4,7 +4,6 @@ import logging
 import numpy as np
 import cv2
 import jsonlines
-from allennlp.common import Registrable
 from allennlp.common.file_utils import cached_path
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import TextField, LabelField, ArrayField
@@ -12,16 +11,13 @@ from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer, Token
 
+from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
+from dpeter.modules.binarizator import ImageBinarizator, SimpleBinarizator
+
 logger = logging.getLogger(__name__)
 
 START_TOKEN = "<START>"
 END_TOKEN = "<END>"
-
-
-class ImageAugmentator(Registrable):
-
-    def __call__(self, image: np.ndarray) -> np.ndarray:
-        pass
 
 
 @DatasetReader.register("peter_reader")
@@ -29,6 +25,7 @@ class PeterReader(DatasetReader):
     def __init__(
         self,
         image_size: Tuple[int, int] = (1024, 128),
+        binarizator: Optional[ImageBinarizator] = None,
         augmentator: Optional[ImageAugmentator] = None,
         add_start_end_tokens: bool = True,
         lazy: bool = False,
@@ -36,7 +33,8 @@ class PeterReader(DatasetReader):
         super().__init__(lazy=lazy)
 
         self._width, self._height = image_size
-        self._augmentator = augmentator
+        self._binarizator = binarizator or SimpleBinarizator()
+        self._augmentator = augmentator or NullAugmentator()
         self._add_start_end_tokens = add_start_end_tokens
         self._tokenizer = CharacterTokenizer()
         self._start_token = Token(START_TOKEN)
@@ -72,8 +70,8 @@ class PeterReader(DatasetReader):
         text: Optional[str] = None,
     ) -> Instance:
 
-        if self._augmentator is not None:
-            image = self._augmentator(image)
+        image = self._binarizator(image)
+        image = self._augmentator(image)
 
         fields = {
             "image": ArrayField(array=image)
