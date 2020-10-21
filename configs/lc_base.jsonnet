@@ -13,7 +13,7 @@ local augmentator = "rotation";
     "shuffle": true,
     "lazy": true
   },
-  "dataset_reader": {
+  "validation_dataset_reader": {
     "type": "peter_reader",
     "image_size": image_size,
     "binarizator": binarizator,
