@@ -1,7 +1,6 @@
 local COMMON = import 'common/basic.jsonnet';
 
-//local image_size = [1024, 128];
-local image_size = [512, 64];
+local image_size = [1024, 128];
 local binarizator = "simple";
 local augmentator = {"type": "rotation", "degree": 3};
 //local augmentator = {"type": "perspective_rotation", "degree": 3, "distortion_scale": 0.2, "p": 0.5, "interpolation": 3};
