@@ -43,20 +43,19 @@ class PeterReader(DatasetReader):
     def _surround_with_start_end_tokens(self, tokens: List[Token]) -> List[Token]:
         return [self._start_token] + tokens + [self._end_token]
 
-    def _preprocess_image(self, img: np.ndarray) -> np.ndarray:
-        img = np.stack([img, img, img], axis=-1)
-        w, h, _ = img.shape
+    def _resize_image(self, img: np.ndarray) -> np.ndarray:
+        w, h = img.shape
 
         new_w = self._height
         new_h = int(h * (new_w / w))
         img = cv2.resize(img, (new_h, new_w))
-        w, h, _ = img.shape
+        w, h = img.shape
 
         img = img.astype('float32')
 
         new_h = self._width
         if h < new_h:
-            add_zeros = np.full((w, new_h - h, 3), 255)
+            add_zeros = np.full((w, new_h - h), 255)
             img = np.concatenate((img, add_zeros), axis=1)
 
         if h > new_h:
@@ -94,7 +93,6 @@ class PeterReader(DatasetReader):
             for items in reader:
                 image_path = items["image_path"]
                 image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-                image = self._preprocess_image(image)
 
                 text_path = items.get("text_path")
                 if text_path is not None:
