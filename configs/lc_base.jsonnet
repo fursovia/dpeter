@@ -1,21 +1,26 @@
 local COMMON = import 'common/basic.jsonnet';
 
 local image_size = [1024, 128];
-local augmentator = null;
+local binarizator = "simple";
+local augmentator = "rotation";
 
 {
   "dataset_reader": {
     "type": "peter_reader",
     "image_size": image_size,
+    "binarizator": binarizator,
     "augmentator": augmentator,
+    "shuffle": true,
+    "lazy": true
+  },
+  "dataset_reader": {
+    "type": "peter_reader",
+    "image_size": image_size,
+    "binarizator": binarizator,
+    "augmentator": null,
+    "shuffle": false,
     "lazy": false
   },
-//  "validation_dataset_reader": {
-//    "type": "peter_reader",
-//    "image_size": image_size,
-//    "augmentator": null,
-//    "lazy": false
-//  },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
   "validation_data_path": std.extVar("VALID_DATA_PATH"),
   "model": {

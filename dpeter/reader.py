@@ -1,10 +1,9 @@
 from typing import List, Optional, Tuple
 import logging
+import random
 
 import numpy as np
 import cv2
-import jsonlines
-from allennlp.common.file_utils import cached_path
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import TextField, LabelField, ArrayField
 from allennlp.data.instance import Instance
@@ -13,6 +12,8 @@ from allennlp.data.tokenizers import CharacterTokenizer, Token
 
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, SimpleBinarizator
+from dpeter.utils.data import load_jsonlines
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class PeterReader(DatasetReader):
         image_size: Tuple[int, int] = (1024, 128),
         binarizator: Optional[ImageBinarizator] = None,
         augmentator: Optional[ImageAugmentator] = None,
+        shuffle: bool = False,
         add_start_end_tokens: bool = True,
         lazy: bool = False,
     ) -> None:
@@ -35,6 +37,7 @@ class PeterReader(DatasetReader):
         self._width, self._height = image_size
         self._binarizator = binarizator or SimpleBinarizator()
         self._augmentator = augmentator or NullAugmentator()
+        self._shuffle = shuffle
         self._add_start_end_tokens = add_start_end_tokens
         self._tokenizer = CharacterTokenizer()
         self._start_token = Token(START_TOKEN)
@@ -90,17 +93,20 @@ class PeterReader(DatasetReader):
 
     def _read(self, file_path: str):
 
-        with jsonlines.open(cached_path(file_path), "r") as reader:
-            for items in reader:
-                image_path = items["image_path"]
-                image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        data = load_jsonlines(file_path)
+        if self._shuffle:
+            random.shuffle(data)
 
-                text_path = items.get("text_path")
-                if text_path is not None:
-                    with open(text_path) as f:
-                        text = f.read()
-                else:
-                    text = None
+        for items in data:
+            image_path = items["image_path"]
+            image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-                instance = self.text_to_instance(image=image, text=text)
-                yield instance
+            text_path = items.get("text_path")
+            if text_path is not None:
+                with open(text_path) as f:
+                    text = f.read()
+            else:
+                text = None
+
+            instance = self.text_to_instance(image=image, text=text)
+            yield instance
