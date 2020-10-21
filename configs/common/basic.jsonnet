@@ -1,6 +1,6 @@
 {
   "data_loader": {
-    "shuffle": true,
+    "shuffle": false,
     "batch_size": 128,
     "num_workers": 0,
     // https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
