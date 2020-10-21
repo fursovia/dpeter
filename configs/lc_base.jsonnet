@@ -2,7 +2,7 @@ local COMMON = import 'common/basic.jsonnet';
 
 local image_size = [1024, 128];
 local binarizator = "simple";
-local augmentator = "rotation";
+local augmentator = {"type": "rotation", "degree": 3};
 
 {
   "dataset_reader": {
