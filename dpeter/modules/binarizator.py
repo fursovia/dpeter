@@ -10,6 +10,13 @@ class ImageBinarizator(Registrable):
         pass
 
 
+@ImageBinarizator.register("null")
+class NullBinarizator(ImageBinarizator):
+
+    def __call__(self, image: np.ndarray) -> np.ndarray:
+        return image
+
+
 @ImageBinarizator.register("simple")
 class SimpleBinarizator(ImageBinarizator):
 

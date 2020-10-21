@@ -11,7 +11,7 @@ from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer, Token
 
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
-from dpeter.modules.binarizator import ImageBinarizator, SimpleBinarizator
+from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
 from dpeter.utils.data import load_jsonlines
 
 
@@ -35,7 +35,7 @@ class PeterReader(DatasetReader):
         super().__init__(lazy=lazy)
 
         self._width, self._height = image_size
-        self._binarizator = binarizator or SimpleBinarizator()
+        self._binarizator = binarizator or NullBinarizator()
         self._augmentator = augmentator or NullAugmentator()
         self._shuffle = shuffle
         self._add_start_end_tokens = add_start_end_tokens
