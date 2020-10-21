@@ -71,6 +71,7 @@ class PeterReader(DatasetReader):
 
         image = self._binarizator(image)
         image = self._augmentator(image)
+        image = self._resize_image(image)
 
         fields = {
             "image": ArrayField(array=image)

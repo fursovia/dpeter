@@ -17,8 +17,9 @@ class LengthClassifier(Model):
     ) -> None:
         super().__init__(vocab, regularizer)
 
-        self._encoder = models.mobilenet_v2(pretrained=True)
-        hidden_dim = 1000  # mobilenet hidden dim
+        self._encoder = models.resnet18()
+        self._encoder.conv1 = torch.nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        hidden_dim = 1000
         self._linear = torch.nn.Linear(hidden_dim, 1)
         self._loss = torch.nn.MSELoss()
 
@@ -29,7 +30,7 @@ class LengthClassifier(Model):
             **kwargs,
     ) -> Dict[str, torch.Tensor]:
 
-        hidden = self._encoder(image.transpose(1, 3))
+        hidden = self._encoder(image.unsqueeze(1))
         y_pred = self._linear(hidden)
 
         output_dict = {"y_pred": y_pred, "hidden": hidden}
