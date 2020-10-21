@@ -17,9 +17,11 @@ class LengthClassifier(Model):
     ) -> None:
         super().__init__(vocab, regularizer)
 
-        self._encoder = models.resnet18()
-        self._encoder.conv1 = torch.nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        hidden_dim = 1000
+        inception = models.inception_v3()
+        # Mixed_5d
+        self._encoder = torch.nn.Sequential(*list(inception.children())[:10])
+        # we assume (128, 1024) shape
+        hidden_dim = 1625
         self._linear = torch.nn.Linear(hidden_dim, 1)
         self._loss = torch.nn.MSELoss()
 
@@ -29,8 +31,14 @@ class LengthClassifier(Model):
             length: Optional[torch.Tensor] = None,
             **kwargs,
     ) -> Dict[str, torch.Tensor]:
+        batch_size = image.size(0)
 
-        hidden = self._encoder(image.unsqueeze(1))
+        if len(image.shape) != 4:
+            # we add one dimension
+            image = torch.repeat_interleave(image.unsqueeze(1), 3, 1)
+
+        hidden = self._encoder(image)
+        hidden = hidden.max(dim=1).values.reshape(batch_size, -1)
         y_pred = self._linear(hidden)
 
         output_dict = {"y_pred": y_pred, "hidden": hidden}
