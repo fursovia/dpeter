@@ -5,7 +5,8 @@ import torch
 from allennlp.data import Vocabulary
 from allennlp.models.model import Model
 from allennlp.nn.regularizers import RegularizerApplicator
-import torchvision.models as models
+
+from dpeter.models.inception import get_inception_encoder
 
 
 @Model.register("length_classifier")
@@ -17,9 +18,7 @@ class LengthClassifier(Model):
     ) -> None:
         super().__init__(vocab, regularizer)
 
-        inception = models.inception_v3()
-        # Mixed_5d
-        self._encoder = torch.nn.Sequential(*list(inception.children())[:10])
+        self._encoder = get_inception_encoder()
         # we assume (128, 1024) shape
         hidden_dim = 1625
         self._linear = torch.nn.Linear(hidden_dim, 1)
