@@ -92,9 +92,9 @@ class Img2Sentence(Model):
         )
         # can i do it in a vector manner?
         for i, curr_length in enumerate(length.cpu().numpy()):
-            token_ids[i, :curr_length] = self._unk_index
+            token_ids[i, :curr_length + 1] = self._unk_index
         token_ids[:, 0] = self._start_index
-        token_ids[:, length + 1] = self._end_index
+        token_ids[torch.arange(token_ids.size(0)), length + 1] = self._end_index
         embeddings = self._embedder(token_ids)
         return embeddings
 
