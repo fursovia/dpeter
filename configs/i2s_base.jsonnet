@@ -63,5 +63,14 @@ local attention_vector_dim = 32;
     }
   },
   "data_loader": COMMON['data_loader'],
-  "trainer": COMMON['trainer']
+  "trainer": {
+    "validation_metric": "-cer",
+    "num_epochs": 100,
+    "patience": 5,
+    "optimizer": {
+      "type": "adam",
+      "lr": 0.001
+    },
+    "cuda_device": 0
+  }
 }

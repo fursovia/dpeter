@@ -7,12 +7,12 @@
     "pin_memory": true
   },
   "trainer": {
-    "num_epochs": 12,
-    "patience": 1,
+    "num_epochs": 100,
+    "patience": 5,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
     },
-    "cuda_device": -1
+    "cuda_device": 0
   }
 }

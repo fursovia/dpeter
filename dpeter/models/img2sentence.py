@@ -144,11 +144,11 @@ class Img2Sentence(Model):
         top_indices = probs.argmax(dim=-1)
 
         output_dict = {"probs": probs, "top_indices": top_indices}
-
+        # import pdb; pdb.set_trace()
         if text is not None:
             output_dict["loss"] = self._loss(
                 logits.transpose(1, 2),
-                text["tokens"]["tokens"],
+                get_token_ids_from_text_field_tensors(text),
             )
 
         if not self.training and text is not None:

@@ -29,11 +29,19 @@ class CompetitionMetric(Metric):
             self.wers.append(editdistance.eval(ps.split(), ts.split()))
 
     def get_metric(self, reset: bool) -> Dict[str, Any]:
-        metrics = {
-            "cer": sum(self.cers) / len(self.cers),
-            "wer": sum(self.wers) / len(self.wers),
-            "acc": sum(self.hits) / len(self.hits),
-        }
+
+        if self.wers:
+            metrics = {
+                "cer": sum(self.cers) / len(self.cers),
+                "wer": sum(self.wers) / len(self.wers),
+                "acc": sum(self.hits) / len(self.hits),
+            }
+        else:
+            metrics = {
+                "cer": 0.0,
+                "wer": 0.0,
+                "acc": 0.0,
+            }
 
         if reset:
             self.reset()
