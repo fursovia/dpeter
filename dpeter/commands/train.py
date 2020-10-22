@@ -14,7 +14,7 @@ from dpeter.utils.data import load_jsonlines, load_images, load_texts
 
 
 PROJECT_NAME = "digital_peter"
-NUM_SAMPLES = 20
+NUM_SAMPLES = 50
 app = typer.Typer()
 
 
@@ -49,19 +49,20 @@ def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: 
 
     wandb.save(str(serialization_dir / "model.tar.gz"))
 
-    valid_data = load_jsonlines(str(data_dir / "valid.json"))[:NUM_SAMPLES]
-    preds = predict(serialization_dir, valid_data)
-    images = load_images(valid_data)
-    texts = load_texts(valid_data)
+    if params["model"]["type"] == "img2sentence":
+        valid_data = load_jsonlines(str(data_dir / "valid.json"))[:NUM_SAMPLES]
+        preds = predict(serialization_dir, valid_data)
+        images = load_images(valid_data)
+        texts = load_texts(valid_data)
 
-    wandb.log(
-        {
-            "examples": [
-                wandb.Image(img, caption=f"true = {text}\npred = {pred}")
-                for img, pred, text in zip(images, preds, texts)
-            ]
-        }
-    )
+        wandb.log(
+            {
+                "examples": [
+                    wandb.Image(img, caption=f"true = {text}\npred = {pred}")
+                    for img, pred, text in zip(images, preds, texts)
+                ]
+            }
+        )
 
 
 if __name__ == "__main__":
