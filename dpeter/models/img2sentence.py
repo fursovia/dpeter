@@ -1,12 +1,11 @@
 from typing import Dict, Optional, Any
 
 import torch
-import numpy as np
 from allennlp.data import Vocabulary, TextFieldTensors
 from allennlp.models.model import Model
 from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
 from allennlp.nn.regularizers import RegularizerApplicator
-from allennlp.nn.util import get_text_field_mask, get_token_ids_from_text_field_tensors
+from allennlp.nn.util import get_token_ids_from_text_field_tensors
 from allennlp.data.vocabulary import DEFAULT_PADDING_TOKEN, DEFAULT_OOV_TOKEN
 
 from dpeter.models.inception import get_inception_encoder
@@ -72,15 +71,27 @@ class Img2Sentence(Model):
         self._loss = torch.nn.CrossEntropyLoss(weight=weight, ignore_index=self._padding_index)
         self._metric = CompetitionMetric(self.vocab)
 
-    def _get_mask_from_length(self, length: torch.Tensor) -> torch.Tensor:
-        length_numpy = length.cpu().numpy()
-        max_length = length_numpy.max() + 2  # we also add start/end tokens
-        mask = np.zeros(shape=(length.size(0), max_length))
+    @staticmethod
+    def _get_positional_ids(length: torch.Tensor) -> torch.Tensor:
+        max_length = length.max().item() + 2
+        position_ids = torch.arange(max_length).unsqueeze(0).expand([length.size(0), max_length])
+        position_ids = position_ids.to(length.device)
+        return position_ids
 
-        for i, curr_length in enumerate(length_numpy):
-            mask[i, :(curr_length + 2)] = 1
-
-        return torch.tensor(mask, dtype=torch.bool, device=length.device)
+    def _get_token_ids(self, length: torch.Tensor) -> torch.Tensor:
+        max_length = length.max().item() + 2  # we also add start/end tokens
+        token_ids = torch.full(
+            size=(length.size(0), max_length),
+            fill_value=self._padding_index,
+            dtype=torch.long,
+            device=length.device
+        )
+        # can i do it in a vector manner?
+        for i, curr_length in enumerate(length.cpu().numpy()):
+            token_ids[i, :curr_length + 1] = self._unk_index
+        token_ids[:, 0] = self._start_index
+        token_ids[torch.arange(token_ids.size(0)), length + 1] = self._end_index
+        return token_ids
 
     def _get_embeddings_from_length(self, length: torch.Tensor) -> torch.Tensor:
         max_length = length.max().item() + 2  # we also add start/end tokens
@@ -105,7 +116,6 @@ class Img2Sentence(Model):
             length: Optional[torch.Tensor] = None,
             **kwargs,
     ) -> Dict[str, torch.Tensor]:
-        batch_size = image.size(0)
 
         if len(image.shape) != 4:
             # we add one dimension
@@ -118,25 +128,20 @@ class Img2Sentence(Model):
         # (batch_size, 125, 13, 288)
         features = features.transpose(1, 3)
 
-        if length is not None:
-            mask = get_text_field_mask(text)
-        else:
+        if length is None:
             with torch.no_grad():
                 length = self._length_classifier(image)
                 length = torch.clamp_min(length, 1).type(torch.long)
                 length = length.to(image.device)
 
-            mask = self._get_mask_from_length(length)
+        # START/END/UNK/PADDING embeddings
+        token_ids = self._get_token_ids(length)
+        token_embeddings = self._embedder(token_ids)
 
-        max_length = length.max().item() + 2
-        position_ids = torch.arange(max_length).unsqueeze(0).expand([batch_size, max_length])
-        position_ids = position_ids.to(image.device)
+        position_ids = self._get_positional_ids(length)
         positional_embeddigns = self._positional_embedder(position_ids)
 
-        # START/END/UNK/PADDING embeddings
-        embeddings = self._get_embeddings_from_length(length)
-
-        embeddings = positional_embeddigns + embeddings
+        embeddings = positional_embeddigns + token_embeddings
 
         # (batch_size, num_tokens, 1625)
         attention_weights = self._attention(embeddings, features)
@@ -146,6 +151,7 @@ class Img2Sentence(Model):
         # (batch_size, input_dim)
         embeddings = self._wc(embeddings) + self._wu1(attention_embeddings)
 
+        mask = (token_ids != self._padding_index).type(torch.bool)
         # (batch_size, hidden_dim)
         contextual_embeddings = self._seq2seq_encoder(embeddings, mask=mask)
 
@@ -157,13 +163,18 @@ class Img2Sentence(Model):
         output_dict = {"probs": probs, "top_indices": top_indices}
         # import pdb; pdb.set_trace()
         if text is not None:
+            text_token_ids = get_token_ids_from_text_field_tensors(text)
+
             output_dict["loss"] = self._loss(
                 logits.transpose(1, 2),
-                get_token_ids_from_text_field_tensors(text),
+                text_token_ids,
             )
 
-        if not self.training and text is not None:
-            self._metric(predictions=top_indices, gold_labels=get_token_ids_from_text_field_tensors(text))
+            if not self.training:
+                self._metric(
+                    predictions=top_indices,
+                    gold_labels=text_token_ids
+                )
 
         return output_dict
 
