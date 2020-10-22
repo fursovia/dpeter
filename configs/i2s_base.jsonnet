@@ -9,13 +9,13 @@ local augmentator = {"type": "rotation", "degree": 3};
 
 local gru_input_size = 128;
 local gru_hidden_size = 256;
-local gru_num_layers = 2;
-local gru_dropout = 0.3;
+local gru_num_layers = 1;
+local gru_dropout = 0.2;
 local gru_bidirectionality = true;
 
 local length_classifier_path = "presets/lc.model.tar.gz";
-local embedding_dim = 64;
-local attention_vector_dim = 32;
+local embedding_dim = 128;
+local attention_vector_dim = 128;
 
 {
   "dataset_reader": {
@@ -64,9 +64,10 @@ local attention_vector_dim = 32;
   },
   "data_loader": COMMON['data_loader'],
   "trainer": {
-    "validation_metric": "-cer",
-    "num_epochs": 100,
-    "patience": 5,
+    // -cer
+    "validation_metric": "-loss",
+    "num_epochs": 200,
+    "patience": 10,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
