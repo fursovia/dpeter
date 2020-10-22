@@ -110,6 +110,8 @@ class Img2Sentence(Model):
         if len(image.shape) != 4:
             # we add one dimension
             image = torch.repeat_interleave(image.unsqueeze(1), 3, 1)
+        else:
+            image = image.transpose(1, 3)
 
         # (batch_size, 288, 13, 125)
         features = self._encoder(image)
