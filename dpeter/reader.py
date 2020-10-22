@@ -13,7 +13,7 @@ from allennlp.data.tokenizers import CharacterTokenizer, Token
 from dpeter.constants import END_TOKEN, START_TOKEN
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
-from dpeter.utils.data import load_jsonlines, load_image
+from dpeter.utils.data import load_jsonlines, load_image, load_text
 
 
 logger = logging.getLogger(__name__)
@@ -114,8 +114,7 @@ class PeterReader(DatasetReader):
 
             text_path = items.get("text_path")
             if text_path is not None:
-                with open(text_path) as f:
-                    text = f.read()
+                text = load_text(text_path)
             else:
                 text = None
 
