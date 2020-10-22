@@ -81,7 +81,12 @@ class Img2Sentence(Model):
 
     def _get_embeddings_from_length(self, length: torch.Tensor) -> torch.Tensor:
         max_length = length.max().item() + 2  # we also add start/end tokens
-        token_ids = torch.full(size=(length.size(0), max_length), fill_value=self._padding_index, dtype=torch.long)
+        token_ids = torch.full(
+            size=(length.size(0), max_length),
+            fill_value=self._padding_index,
+            dtype=torch.long,
+            device=length.device
+        )
         # can i do it in a vector manner?
         for i, curr_length in enumerate(length.cpu().numpy()):
             token_ids[i, :curr_length] = self._unk_index
