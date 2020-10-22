@@ -57,9 +57,14 @@ def load_images(data: List[Dict[str, str]]) -> List[np.ndarray]:
     return images
 
 
+def load_text(text_path: str) -> str:
+    with open(text_path) as f:
+        text = f.read()
+    return text
+
+
 def load_texts(data: List[Dict[str, str]]) -> List[str]:
     texts = []
     for element in data:
-        with open(element["text_path"]) as f:
-            texts.append(f.read())
+        texts.append(load_text(element["text_path"]))
     return texts
