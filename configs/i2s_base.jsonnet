@@ -64,10 +64,10 @@ local attention_vector_dim = 128;
   },
   "data_loader": COMMON['data_loader'],
   "trainer": {
-    // -cer
-    "validation_metric": "-loss",
+    // -loss
+    "validation_metric": "-cer",
     "num_epochs": 200,
-    "patience": 10,
+    "patience": 20,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
