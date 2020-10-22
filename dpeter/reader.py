@@ -29,7 +29,7 @@ class PeterReader(DatasetReader):
         shuffle: bool = False,
         add_start_end_tokens: bool = True,
         lazy: bool = False,
-        manual_multi_process_sharding: bool = True,
+        manual_multi_process_sharding: bool = False,
     ) -> None:
         super().__init__(lazy=lazy, manual_multi_process_sharding=manual_multi_process_sharding)
 
