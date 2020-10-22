@@ -39,10 +39,9 @@ local attention_vector_dim = 128;
       "input_dim": tr_input_size,
       "num_layers": 4,
       "num_attention_heads": 4,
-      "feedforward_hidden_dim": 32,
-      "positional_embedding_size": 512,
-      "positional_encoding": "embedding",
-      "dropout_prob": 0.05,
+      "feedforward_hidden_dim": 64,
+      "positional_encoding": null,
+      "dropout_prob": 0.1,
       "activation": "relu"
     },
     "length_classifier": {
