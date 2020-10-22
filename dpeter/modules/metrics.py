@@ -16,6 +16,9 @@ class CompetitionMetric(Metric):
         self.wers = []
         self.hits = []
 
+        self.clens = []
+        self.wlens = []
+
     def __call__(
         self, predictions: torch.Tensor, gold_labels: torch.Tensor, mask: Optional[torch.BoolTensor] = None
     ):
@@ -25,18 +28,20 @@ class CompetitionMetric(Metric):
 
         for ps, ts in zip(predicted_senteces, true_senteces):
             self.hits.append(ps == ts)
-            self.cers.append(editdistance.eval(ps, ts) / len(ts))
+            self.cers.append(editdistance.eval(ps, ts))
+            self.clens.append(len(ts))
 
             ps_words = ps.split()
             ts_words = ts.split()
-            self.wers.append(editdistance.eval(ps_words, ts_words) / len(ts_words))
+            self.wers.append(editdistance.eval(ps_words, ts_words))
+            self.wlens.append(len(ts_words))
 
     def get_metric(self, reset: bool) -> Dict[str, Any]:
 
         if self.wers:
             metrics = {
-                "cer": sum(self.cers) / len(self.cers),
-                "wer": sum(self.wers) / len(self.wers),
+                "cer": sum(self.cers) / sum(self.clens),
+                "wer": sum(self.wers) / sum(self.wlens),
                 "acc": sum(self.hits) / len(self.hits),
             }
         else:
@@ -55,3 +60,5 @@ class CompetitionMetric(Metric):
         self.cers = []
         self.wers = []
         self.hits = []
+        self.clens = []
+        self.wlens = []
