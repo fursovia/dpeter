@@ -13,7 +13,7 @@ from allennlp.data.tokenizers import CharacterTokenizer, Token
 from dpeter.constants import END_TOKEN, START_TOKEN
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
-from dpeter.utils.data import load_jsonlines
+from dpeter.utils.data import load_jsonlines, load_image
 
 
 logger = logging.getLogger(__name__)
@@ -46,24 +46,34 @@ class PeterReader(DatasetReader):
         return [self._start_token] + tokens + [self._end_token]
 
     def _resize_image(self, img: np.ndarray) -> np.ndarray:
-        w, h = img.shape
+        w, h, _ = img.shape
 
-        new_w = self._height
+        if w > h * 2:
+            img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            w, h, _ = img.shape
+
+        new_w = 128
         new_h = int(h * (new_w / w))
         img = cv2.resize(img, (new_h, new_w))
-        w, h = img.shape
+        w, h, _ = img.shape
 
         img = img.astype('float32')
 
-        new_h = self._width
-        if h < new_h:
-            add_zeros = np.full((w, new_h - h), 255)
+        if w < 128:
+            add_zeros = np.full((128 - w, h, 3), 255)
+            img = np.concatenate((img, add_zeros))
+            w, h, _ = img.shape
+
+        if h < 1024:
+            add_zeros = np.full((w, 1024 - h, 3), 255)
             img = np.concatenate((img, add_zeros), axis=1)
+            w, h, _ = img.shape
 
-        if h > new_h:
-            img = cv2.resize(img, (new_h, new_w))
+        if h > 1024 or w > 128:
+            dim = (1024, 128)
+            img = cv2.resize(img, dim)
 
-        return img / 255.0
+        return img.astype('uint8')
 
     def text_to_instance(
         self,
@@ -71,9 +81,11 @@ class PeterReader(DatasetReader):
         text: Optional[str] = None,
     ) -> Instance:
 
+        image = self._resize_image(image)
         image = self._binarizator(image)
         image = self._augmentator(image)
-        image = self._resize_image(image)
+        image = cv2.subtract(255, image)
+        image = image / 255.0
 
         fields = {
             "image": ArrayField(array=image)
@@ -98,7 +110,7 @@ class PeterReader(DatasetReader):
 
         for items in data:
             image_path = items["image_path"]
-            image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+            image = load_image(image_path)
 
             text_path = items.get("text_path")
             if text_path is not None:
@@ -109,5 +121,3 @@ class PeterReader(DatasetReader):
 
             instance = self.text_to_instance(image=image, text=text)
             yield instance
-
-from allennlp.data import DataLoader, PyTorchDataLoader

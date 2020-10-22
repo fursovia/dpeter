@@ -44,7 +44,7 @@ def decode_indexes(
 
 
 def load_image(image_path: str) -> np.ndarray:
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread(image_path)
     return image
 
 

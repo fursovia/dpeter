@@ -6,5 +6,6 @@ from .modules import (
     SimpleBinarizator,
     PerspectiveRotationAugmentator,
     NullBinarizator,
-    WnBCallback
+    WnBCallback,
+    GoogleAugmentator
 )
