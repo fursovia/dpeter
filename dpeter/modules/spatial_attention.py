@@ -16,7 +16,6 @@ class SpatialAttention(torch.nn.Module, FromParams):
 
         self._vector = torch.nn.Parameter(torch.Tensor(self._hidden_dim, 1), requires_grad=True)
         torch.nn.init.xavier_uniform_(self._vector)
-        self._vector = self._vector.flatten()
         self._wf = torch.nn.Linear(self._num_channels, self._hidden_dim)
         self._ws = torch.nn.Linear(self._embedding_dim, self._hidden_dim)
 
@@ -29,7 +28,7 @@ class SpatialAttention(torch.nn.Module, FromParams):
         wss = self._ws(embeddings).unsqueeze(2).unsqueeze(2)
 
         out = torch.tanh(wff + wss)
-        attention_values = torch.matmul(out, self._vector)
+        attention_values = torch.matmul(out, self._vector.flatten())
 
         attention_values = attention_values.reshape(batch_size, num_tokens, -1)
         attention_weights = torch.softmax(attention_values, dim=-1)
