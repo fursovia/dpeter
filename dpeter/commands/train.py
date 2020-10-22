@@ -10,7 +10,7 @@ import wandb
 
 import dpeter
 from dpeter.commands.predict import predict
-from dpeter.utils.data import load_jsonlines, load_images
+from dpeter.utils.data import load_jsonlines, load_images, load_texts
 
 
 PROJECT_NAME = "digital_peter"
@@ -52,10 +52,14 @@ def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: 
     valid_data = load_jsonlines(str(data_dir / "valid.json"))[:NUM_SAMPLES]
     preds = predict(serialization_dir, valid_data)
     images = load_images(valid_data)
+    texts = load_texts(valid_data)
 
     wandb.log(
         {
-            "examples": [wandb.Image(img, caption=text) for img, text in zip(images, preds)]
+            "examples": [
+                wandb.Image(img, caption=f"true = {text}\npred = {pred}")
+                for img, pred, text in zip(images, preds, texts)
+            ]
         }
     )
 
