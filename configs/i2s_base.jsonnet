@@ -66,7 +66,7 @@ local attention_vector_dim = 128;
   "trainer": {
     // -loss
     "validation_metric": "-cer",
-    "num_epochs": 200,
+    "num_epochs": 300,
     "patience": 20,
     "optimizer": {
       "type": "adam",
