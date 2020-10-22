@@ -25,8 +25,11 @@ class CompetitionMetric(Metric):
 
         for ps, ts in zip(predicted_senteces, true_senteces):
             self.hits.append(ps == ts)
-            self.cers.append(editdistance.eval(ps, ts))
-            self.wers.append(editdistance.eval(ps.split(), ts.split()))
+            self.cers.append(editdistance.eval(ps, ts) / len(ts))
+
+            ps_words = ps.split()
+            ts_words = ts.split()
+            self.wers.append(editdistance.eval(ps_words, ts_words) / len(ts_words))
 
     def get_metric(self, reset: bool) -> Dict[str, Any]:
 
