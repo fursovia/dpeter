@@ -5,12 +5,13 @@ from allennlp.data import Vocabulary, TextFieldTensors
 from allennlp.models.model import Model
 from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
 from allennlp.nn.regularizers import RegularizerApplicator
-from allennlp.nn.util import get_token_ids_from_text_field_tensors
+from allennlp.nn.util import get_token_ids_from_text_field_tensors, weighted_sum
 from allennlp.data.vocabulary import DEFAULT_PADDING_TOKEN, DEFAULT_OOV_TOKEN
+from allennlp.modules.matrix_attention import BilinearMatrixAttention
 
 from dpeter.models.inception import get_inception_encoder
 from dpeter.modules.metrics import CompetitionMetric
-from dpeter.modules.spatial_attention import SpatialAttention
+# from dpeter.modules.spatial_attention import SpatialAttention
 from dpeter.constants import END_TOKEN, START_TOKEN
 from dpeter.utils.data import decode_indexes
 
@@ -48,11 +49,16 @@ class Img2Sentence(Model):
         self._encoder = get_inception_encoder()
         self._seq2seq_encoder = seq2seq_encoder
         self._length_classifier = length_classifier.eval()
-        self._attention = SpatialAttention(
-            num_channels=self.NUM_CHANNELS,
-            embedding_dim=emb_dim,
-            hidden_dim=self._att_dim
+        self._attention = BilinearMatrixAttention(
+            matrix_1_dim=self._emb_dim,
+            matrix_2_dim=self.NUM_CHANNELS,
+            use_input_biases=True,
         )
+        # self._attention = SpatialAttention(
+        #     num_channels=self.NUM_CHANNELS,
+        #     embedding_dim=emb_dim,
+        #     hidden_dim=self._att_dim
+        # )
 
         self._wc = torch.nn.Linear(self._emb_dim, self._input_dim)
         self._wu1 = torch.nn.Linear(self.NUM_CHANNELS, self._input_dim)
@@ -127,6 +133,7 @@ class Img2Sentence(Model):
         features = self._encoder(image)
         # (batch_size, 125, 13, 288)
         features = features.transpose(1, 3)
+        features = features.reshape(features.size(0), -1, 288)
 
         if length is None:
             with torch.no_grad():
@@ -136,6 +143,7 @@ class Img2Sentence(Model):
 
         # START/END/UNK/PADDING embeddings
         token_ids = self._get_token_ids(length)
+        mask = (token_ids != self._padding_index).type(torch.bool)
         token_embeddings = self._embedder(token_ids)
 
         position_ids = self._get_positional_ids(length)
@@ -145,13 +153,14 @@ class Img2Sentence(Model):
 
         # (batch_size, num_tokens, 1625)
         attention_weights = self._attention(embeddings, features)
+        attention_scores = torch.softmax(attention_weights, dim=-1)
+
         # (batch_size, num_tokens, NUM_CHANNELS)
-        attention_embeddings = self._attention.get_attention_features(features, attention_weights)
+        attention_embeddings = weighted_sum(features, attention_scores)
 
         # (batch_size, input_dim)
         embeddings = self._wc(embeddings) + self._wu1(attention_embeddings)
 
-        mask = (token_ids != self._padding_index).type(torch.bool)
         # (batch_size, hidden_dim)
         contextual_embeddings = self._seq2seq_encoder(embeddings, mask=mask)
 
