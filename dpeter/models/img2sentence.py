@@ -65,8 +65,12 @@ class Img2Sentence(Model):
         self._start_index = self.vocab.get_token_index(START_TOKEN)
         self._end_index = self.vocab.get_token_index(END_TOKEN)
         self._unk_index = self.vocab.get_token_index(DEFAULT_OOV_TOKEN)
+        self._space_index = self.vocab.get_token_index(" ")
 
-        self._loss = torch.nn.CrossEntropyLoss(ignore_index=self._padding_index)
+        # TODO: pass weight for /s
+        weight = torch.ones(self.vocab.get_vocab_size("tokens"))
+        weight[self._space_index] = 2.0
+        self._loss = torch.nn.CrossEntropyLoss(weight=weight, ignore_index=self._padding_index)
         self._metric = CompetitionMetric(self.vocab)
 
     def _get_mask_from_length(self, length: torch.Tensor) -> torch.Tensor:
