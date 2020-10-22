@@ -14,8 +14,9 @@ class SpatialAttention(torch.nn.Module, FromParams):
         self._embedding_dim = embedding_dim
         self._hidden_dim = hidden_dim
 
-        self._vector = torch.nn.Parameter(torch.Tensor(self._hidden_dim), requires_grad=True)
+        self._vector = torch.nn.Parameter(torch.Tensor(self._hidden_dim, 1), requires_grad=True)
         torch.nn.init.xavier_uniform_(self._vector)
+        self._vector = self._vector.flatten()
         self._wf = torch.nn.Linear(self._num_channels, self._hidden_dim)
         self._ws = torch.nn.Linear(self._embedding_dim, self._hidden_dim)
 
