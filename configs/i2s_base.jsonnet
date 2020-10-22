@@ -9,7 +9,7 @@ local augmentator = {"type": "rotation", "degree": 3};
 
 local gru_input_size = 128;
 local gru_hidden_size = 256;
-local gru_num_layers = 1;
+local gru_num_layers = 2;
 local gru_dropout = 0.2;
 local gru_bidirectionality = true;
 
