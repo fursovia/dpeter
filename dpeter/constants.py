@@ -1,0 +1,2 @@
+END_TOKEN = "<END>"
+START_TOKEN = "<START>"

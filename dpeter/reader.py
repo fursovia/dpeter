@@ -10,15 +10,13 @@ from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer, Token
 
+from dpeter.constants import END_TOKEN, START_TOKEN
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
 from dpeter.utils.data import load_jsonlines
 
 
 logger = logging.getLogger(__name__)
-
-START_TOKEN = "<START>"
-END_TOKEN = "<END>"
 
 
 @DatasetReader.register("peter_reader")

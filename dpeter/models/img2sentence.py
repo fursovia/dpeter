@@ -12,7 +12,7 @@ from allennlp.data.vocabulary import DEFAULT_PADDING_TOKEN, DEFAULT_OOV_TOKEN
 from dpeter.models.inception import get_inception_encoder
 from dpeter.modules.metrics import CompetitionMetric
 from dpeter.modules.spatial_attention import SpatialAttention
-from dpeter.reader import START_TOKEN, END_TOKEN
+from dpeter.constants import END_TOKEN, START_TOKEN
 from dpeter.utils.data import decode_indexes
 
 
@@ -81,7 +81,7 @@ class Img2Sentence(Model):
 
     def _get_embeddings_from_length(self, length: torch.Tensor) -> torch.Tensor:
         max_length = length.max().item() + 2  # we also add start/end tokens
-        token_ids = torch.full(size=(length.size(0), max_length), fill_value=self._padding_index)
+        token_ids = torch.full(size=(length.size(0), max_length), fill_value=self._padding_index, dtype=torch.long)
         # can i do it in a vector manner?
         for i, curr_length in enumerate(length.cpu().numpy()):
             token_ids[i, :curr_length] = self._unk_index
@@ -120,7 +120,7 @@ class Img2Sentence(Model):
 
         max_length = length.max().item() + 2
         position_ids = torch.arange(max_length).unsqueeze(0).expand([batch_size, max_length])
-        positional_embeddigns = self._positional_embedding(position_ids)
+        positional_embeddigns = self._positional_embedder(position_ids)
 
         # START/END/UNK/PADDING embeddings
         embeddings = self._get_embeddings_from_length(length)

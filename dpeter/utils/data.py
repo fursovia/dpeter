@@ -4,7 +4,7 @@ import jsonlines
 import torch
 from allennlp.data import Vocabulary
 
-from dpeter.reader import END_TOKEN
+from dpeter.constants import END_TOKEN
 
 
 def load_jsonlines(path: str) -> List[Dict[str, Any]]:
