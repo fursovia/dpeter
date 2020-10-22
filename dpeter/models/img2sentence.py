@@ -125,6 +125,7 @@ class Img2Sentence(Model):
 
         max_length = length.max().item() + 2
         position_ids = torch.arange(max_length).unsqueeze(0).expand([batch_size, max_length])
+        position_ids = position_ids.to(image.device)
         positional_embeddigns = self._positional_embedder(position_ids)
 
         # START/END/UNK/PADDING embeddings
