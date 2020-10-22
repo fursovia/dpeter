@@ -9,8 +9,12 @@ from allennlp.common import Params
 import wandb
 
 import dpeter
+from dpeter.commands.predict import predict
+from dpeter.utils.data import load_jsonlines, load_images
+
 
 PROJECT_NAME = "digital_peter"
+NUM_SAMPLES = 20
 app = typer.Typer()
 
 
@@ -37,13 +41,6 @@ def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: 
 
     train_model(params, str(serialization_dir))
 
-    metrics_paths = list(serialization_dir.glob("metrics_epoch_*.json"))
-    for i in range(len(metrics_paths)):
-        path = str(serialization_dir / f"metrics_epoch_{i}.json")
-        with open(path) as f:
-            metrics = json.load(f)
-            wandb.log(metrics)
-
     with open(str(serialization_dir / "metrics.json")) as f:
         metrics = json.load(f)
 
@@ -51,6 +48,16 @@ def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: 
             wandb.run.summary[key] = val
 
     wandb.save(str(serialization_dir / "model.tar.gz"))
+
+    valid_data = load_jsonlines(str(data_dir / "valid.json"))[:NUM_SAMPLES]
+    preds = predict(serialization_dir, valid_data)
+    images = load_images(valid_data)
+
+    wandb.log(
+        {
+            "examples": [wandb.Image(img, caption=text) for img, text in zip(images, preds)]
+        }
+    )
 
 
 if __name__ == "__main__":

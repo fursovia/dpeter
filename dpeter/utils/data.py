@@ -3,6 +3,8 @@ from typing import List, Dict, Any, Sequence
 import jsonlines
 import torch
 from allennlp.data import Vocabulary
+import numpy as np
+import cv2
 
 from dpeter.constants import END_TOKEN
 
@@ -39,3 +41,17 @@ def decode_indexes(
         sentences.append("".join(curr_sentence))
 
     return sentences
+
+
+def load_image(image_path: str) -> np.ndarray:
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    return image
+
+
+def load_images(data: List[Dict[str, str]]) -> List[np.ndarray]:
+
+    images = []
+    for element in data:
+        images.append(load_image(element["image_path"]))
+
+    return images

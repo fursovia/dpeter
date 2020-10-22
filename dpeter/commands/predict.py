@@ -1,22 +1,15 @@
-from typing import Optional
-from datetime import datetime
+from typing import List, Dict
 from pathlib import Path
-import json
 
-import typer
-from allennlp.commands.train import train_model
-from allennlp.common import Params
-import wandb
+from allennlp.models.archival import load_archive
 
 import dpeter
-
-app = typer.Typer()
-
-
-@app.command()
-def predict(serialization_dir: str):
-    pass
+from dpeter.predictor import PeterPredictor
 
 
-if __name__ == "__main__":
-    app()
+def predict(serialization_dir: Path, data: List[Dict[str, str]], cuda_device: int = 0):
+    archive = load_archive(str(serialization_dir / 'model.tar.gz'), cuda_device=cuda_device)
+    predictor = PeterPredictor.from_archive(archive)
+    preds = predictor.predict_batch_json(data)
+    preds = [p['sentences'] for p in preds]
+    return preds

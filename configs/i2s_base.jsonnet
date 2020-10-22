@@ -72,6 +72,7 @@ local attention_vector_dim = 128;
       "type": "adam",
       "lr": 0.001
     },
+    "epoch_callbacks": ["wandb"],
     "cuda_device": 0
   }
 }
