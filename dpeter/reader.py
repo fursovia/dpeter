@@ -43,7 +43,8 @@ class PeterReader(DatasetReader):
     def _surround_with_start_end_tokens(self, tokens: List[Token]) -> List[Token]:
         return [self._start_token] + tokens + [self._end_token]
 
-    def _resize_image(self, img: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def resize_image(img: np.ndarray) -> np.ndarray:
         w, h, _ = img.shape
 
         if w > h * 2:
@@ -79,7 +80,7 @@ class PeterReader(DatasetReader):
         text: Optional[str] = None,
     ) -> Instance:
 
-        image = self._resize_image(image)
+        image = self.resize_image(image)
         image = self._binarizator(image)
         image = self._augmentator(image)
         image = cv2.subtract(WHITE_CONSTANT, image)
