@@ -1,7 +1,7 @@
 local COMMON = import 'common/basic.jsonnet';
 
 local binarizator = "null";
-local augmentator = "null";
+local augmentator = "google";
 
 local encoder_dim = 288;
 local target_embedding_dim = 128;
