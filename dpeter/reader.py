@@ -74,6 +74,12 @@ class PeterReader(DatasetReader):
 
         return img.astype('uint8')
 
+    @staticmethod
+    def to_float(image: np.ndarray) -> np.ndarray:
+        image = cv2.subtract(WHITE_CONSTANT, image)
+        image = image / WHITE_CONSTANT
+        return image
+
     def text_to_instance(
         self,
         image: np.ndarray,
@@ -83,8 +89,7 @@ class PeterReader(DatasetReader):
         image = self.resize_image(image)
         image = self._binarizator(image)
         image = self._augmentator(image)
-        image = cv2.subtract(WHITE_CONSTANT, image)
-        image = image / WHITE_CONSTANT
+        image = self.to_float(image)
 
         fields = {
             "image": ArrayField(array=image)
