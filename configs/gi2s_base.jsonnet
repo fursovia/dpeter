@@ -25,6 +25,7 @@ local target_decoder_layers = 1;
   },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
   "validation_data_path": std.extVar("VALID_DATA_PATH"),
+  "vocabulary": COMMON["vocabulary"],
   "model": {
     "type": "generative_img2sentence",
     "max_decoding_steps": max_decoding_steps,

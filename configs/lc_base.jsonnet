@@ -19,6 +19,7 @@ local augmentator = {"type": "rotation", "degree": 3};
   },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
   "validation_data_path": std.extVar("VALID_DATA_PATH"),
+  "vocabulary": COMMON["vocabulary"],
   "model": {
     "type": "length_classifier",
     "regularizer": {

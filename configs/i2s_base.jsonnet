@@ -28,6 +28,7 @@ local attention_vector_dim = 128;
   },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
   "validation_data_path": std.extVar("VALID_DATA_PATH"),
+  "vocabulary": COMMON["vocabulary"],
   "model": {
     "type": "img2sentence",
     "seq2seq_encoder": {

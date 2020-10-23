@@ -11,6 +11,10 @@ local batches_per_epoch = std.parseInt(dataset_size / batch_size);
     // https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
     "pin_memory": true
   },
+  "vocabulary": {
+    "type": "from_files",
+    "directory": "presets/vocabulary"
+  },
   "trainer": {
     "num_epochs": 100,
     "patience": 5,
