@@ -49,7 +49,7 @@ def train(param_path: Path, data_dir: Optional[Path] = None, serialization_dir: 
 
     wandb.save(str(serialization_dir / "model.tar.gz"))
 
-    if flat_params["model.type"] == "img2sentence":
+    if flat_params["model.type"] in ["img2sentence", "generative_img2sentence"]:
         valid_data = load_jsonlines(str(data_dir / "valid.json"))[:NUM_SAMPLES]
         preds = predict(serialization_dir, valid_data)
         images = load_images(valid_data)
