@@ -4,7 +4,7 @@ local COMMON = import 'common/basic.jsonnet';
 local image_size = [1024, 128];
 
 local binarizator = "null";
-local augmentator = "google";
+local augmentator = "null";
 
 local encoder_dim = 288;
 local target_embedding_dim = 128;
