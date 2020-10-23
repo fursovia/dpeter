@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 import logging
 import random
 
@@ -10,7 +10,7 @@ from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer, Token
 
-from dpeter.constants import END_TOKEN, START_TOKEN, HEIGHT, WIDTH
+from dpeter.constants import END_TOKEN, START_TOKEN, HEIGHT, WIDTH, NUM_CHANNELS, WHITE_CONSTANT
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
 from dpeter.utils.data import load_jsonlines, load_image, load_text
@@ -32,7 +32,6 @@ class PeterReader(DatasetReader):
     ) -> None:
         super().__init__(lazy=lazy, manual_multi_process_sharding=manual_multi_process_sharding)
 
-        self._width, self._height = WIDTH, HEIGHT
         self._binarizator = binarizator or NullBinarizator()
         self._augmentator = augmentator or NullAugmentator()
         self._shuffle = shuffle
@@ -51,25 +50,25 @@ class PeterReader(DatasetReader):
             img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
             w, h, _ = img.shape
 
-        new_w = 128
+        new_w = HEIGHT
         new_h = int(h * (new_w / w))
         img = cv2.resize(img, (new_h, new_w))
         w, h, _ = img.shape
 
         img = img.astype('float32')
 
-        if w < 128:
-            add_zeros = np.full((128 - w, h, 3), 255)
+        if w < HEIGHT:
+            add_zeros = np.full((HEIGHT - w, h, NUM_CHANNELS), WHITE_CONSTANT)
             img = np.concatenate((img, add_zeros))
             w, h, _ = img.shape
 
-        if h < 1024:
-            add_zeros = np.full((w, 1024 - h, 3), 255)
+        if h < WIDTH:
+            add_zeros = np.full((w, WIDTH - h, NUM_CHANNELS), WHITE_CONSTANT)
             img = np.concatenate((img, add_zeros), axis=1)
             w, h, _ = img.shape
 
-        if h > 1024 or w > 128:
-            dim = (1024, 128)
+        if h > WIDTH or w > HEIGHT:
+            dim = (WIDTH, HEIGHT)
             img = cv2.resize(img, dim)
 
         return img.astype('uint8')
@@ -83,8 +82,8 @@ class PeterReader(DatasetReader):
         image = self._resize_image(image)
         image = self._binarizator(image)
         image = self._augmentator(image)
-        image = cv2.subtract(255, image)
-        image = image / 255.0
+        image = cv2.subtract(WHITE_CONSTANT, image)
+        image = image / WHITE_CONSTANT
 
         fields = {
             "image": ArrayField(array=image)

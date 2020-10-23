@@ -2,6 +2,8 @@ import numpy as np
 from allennlp.common import Registrable
 from torchvision import transforms
 
+from dpeter.constants import WHITE_CONSTANT, VALUES_ABOVE_THIS_ARE_ALSO_WHITE, HEIGHT, WIDTH, NUM_CHANNELS
+
 
 class ImageAugmentator(Registrable):
 
@@ -24,7 +26,7 @@ class RotationAugmentator(ImageAugmentator):
         self._transform = transforms.Compose(
             [
                 transforms.ToPILImage(),
-                transforms.RandomRotation(degrees=(-degree, degree), fill=255),
+                transforms.RandomRotation(degrees=(-degree, degree), fill=WHITE_CONSTANT),
             ]
         )
 
@@ -44,9 +46,9 @@ class PerspectiveRotationAugmentator(ImageAugmentator):
                     distortion_scale=distortion_scale,
                     p=p,
                     interpolation=interpolation,
-                    fill=255
+                    fill=WHITE_CONSTANT
                 ),
-                transforms.RandomRotation(degrees=(-degree, degree), fill=255),
+                transforms.RandomRotation(degrees=(-degree, degree), fill=WHITE_CONSTANT),
             ]
         )
 
@@ -59,22 +61,17 @@ class GoogleAugmentator(ImageAugmentator):
 
     def __init__(self):
         super().__init__()
-        height = 128
-        width = 1024
-
-        height2 = int(height * 1.04)
-        width2 = int(width * 1.04)
 
         self._transform = transforms.Compose(
             [
                 transforms.ToPILImage(),
                 transforms.RandomChoice(
                     [
-                        transforms.Resize((height2, width2), interpolation=i) for i in range(6)
+                        transforms.Resize((int(HEIGHT * 1.04), int(WIDTH * 1.04)), interpolation=i) for i in range(6)
                     ]
                 ),
-                transforms.RandomCrop((height, width)),
-                transforms.RandomRotation(degrees=(-3, 2), fill=255),
+                transforms.RandomCrop((HEIGHT, WIDTH)),
+                transforms.RandomRotation(degrees=(-3, 2), fill=WHITE_CONSTANT),
                 transforms.RandomChoice(
                     [
                         transforms.ColorJitter(contrast=0.1),
@@ -84,7 +81,7 @@ class GoogleAugmentator(ImageAugmentator):
                 ),
                 transforms.RandomChoice(
                     [
-                        transforms.RandomPerspective(distortion_scale=0.1, p=1.0, interpolation=i, fill=255)
+                        transforms.RandomPerspective(distortion_scale=0.1, p=1.0, interpolation=i, fill=WHITE_CONSTANT)
                         for i in [0, 2, 3]
                     ]
                 )
@@ -93,11 +90,11 @@ class GoogleAugmentator(ImageAugmentator):
 
     def __call__(self, image: np.ndarray) -> np.ndarray:
         img = np.array(self._transform(image))
-        img[img >= 230] = 255
+        img[img >= VALUES_ABOVE_THIS_ARE_ALSO_WHITE] = WHITE_CONSTANT
 
-        num_first_zeros = ((img[:, :, 0] != 255).sum(axis=0) != 0).argmax()
+        num_first_zeros = ((img[:, :, 0] != WHITE_CONSTANT).sum(axis=0) != 0).argmax()
         if num_first_zeros > 0:
-            add_zeros = np.full((128, num_first_zeros, 3), 255).astype(np.uint8)
+            add_zeros = np.full((HEIGHT, num_first_zeros, NUM_CHANNELS), WHITE_CONSTANT).astype(np.uint8)
             img = np.concatenate((img[:, num_first_zeros:], add_zeros), axis=1)
 
         return img
