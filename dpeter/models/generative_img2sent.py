@@ -23,6 +23,7 @@ from dpeter.modules.metrics import CompetitionMetric
 @Model.register("generative_img2sentence")
 class GenerativeImg2Sentence(Model):
     target_namespace = "tokens"
+    MAX_SENTENCE_LENGTH = 128
 
     def __init__(
         self,
@@ -62,6 +63,11 @@ class GenerativeImg2Sentence(Model):
             vocab=self.vocab,
         )
 
+        self._positional_embedder = torch.nn.Embedding(
+            num_embeddings=self.MAX_SENTENCE_LENGTH,
+            embedding_dim=target_embedding_dim
+        )
+
         # Decoder output dim needs to be the same as the encoder output dim since we initialize the
         # hidden state of the decoder with the final hidden state of the encoder.
         self._encoder_output_dim = self._encoder.get_output_dim()
@@ -85,7 +91,7 @@ class GenerativeImg2Sentence(Model):
         self, last_predictions: torch.Tensor, state: Dict[str, torch.Tensor], step: int
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         # shape: (group_size, num_classes)
-        output_projections, state = self._prepare_output_projections(last_predictions, state)
+        output_projections, state = self._prepare_output_projections(last_predictions, state, step)
 
         # shape: (group_size, num_classes)
         class_log_probabilities = F.log_softmax(output_projections, dim=-1)
@@ -197,7 +203,7 @@ class GenerativeImg2Sentence(Model):
                 input_choices = targets[:, timestep]
 
             # shape: (batch_size, num_classes)
-            output_projections, state = self._prepare_output_projections(input_choices, state)
+            output_projections, state = self._prepare_output_projections(input_choices, state, timestep)
 
             # list of tensors, shape: (batch_size, 1, num_classes)
             step_logits.append(output_projections.unsqueeze(1))
@@ -249,7 +255,7 @@ class GenerativeImg2Sentence(Model):
         return output_dict
 
     def _prepare_output_projections(
-        self, last_predictions: torch.Tensor, state: Dict[str, torch.Tensor]
+        self, last_predictions: torch.Tensor, state: Dict[str, torch.Tensor], step: int
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         # shape: (group_size, max_input_sequence_length, encoder_output_dim)
         encoder_outputs = state["encoder_outputs"]
@@ -265,6 +271,16 @@ class GenerativeImg2Sentence(Model):
 
         # shape: (group_size, target_embedding_dim)
         embedded_input = self._target_embedder(last_predictions)
+
+        position_ids = torch.full(
+            size=(embedded_input.size(0), ),
+            fill_value=step,
+            dtype=torch.long,
+            device=embedded_input.device
+        )
+        positional_embeddings = self._positional_embedder(position_ids)
+
+        embedded_input = embedded_input + positional_embeddings
 
         # shape: (group_size, encoder_output_dim)
         if self._target_decoder_layers > 1:
