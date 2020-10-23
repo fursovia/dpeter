@@ -338,7 +338,7 @@ class GenerativeImg2Sentence(Model):
             targets=relevant_targets,
             weights=relevant_mask,
             label_smoothing=None,
-            gamma=1.2,
+            gamma=None,
             alpha=None
         )
 

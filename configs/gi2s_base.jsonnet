@@ -7,7 +7,7 @@ local binarizator = "null";
 local augmentator = "google";
 
 local encoder_dim = 288;
-local target_embedding_dim = 64;
+local target_embedding_dim = 128;
 local max_decoding_steps = 80;
 local beam_size = 3;
 
@@ -40,9 +40,9 @@ local beam_size = 3;
   "data_loader": COMMON['data_loader'],
   "trainer": {
     // -loss
-    "validation_metric": "-cer",
+    "validation_metric": "-loss",
     "num_epochs": 300,
-    "patience": 20,
+    "patience": 30,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
