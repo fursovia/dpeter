@@ -20,14 +20,14 @@ local beam_size = 3;
     "shuffle": true,
     "lazy": true
   },
-  "validation_dataset_reader": {
-    "type": "peter_reader",
-    "image_size": image_size,
-    "binarizator": binarizator,
-    "augmentator": null,
-    "shuffle": false,
-    "lazy": false
-  },
+//  "validation_dataset_reader": {
+//    "type": "peter_reader",
+//    "image_size": image_size,
+//    "binarizator": binarizator,
+//    "augmentator": null,
+//    "shuffle": false,
+//    "lazy": false
+//  },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
   "validation_data_path": std.extVar("VALID_DATA_PATH"),
   "model": {
