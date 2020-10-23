@@ -33,7 +33,7 @@ local beam_size = 3;
   "model": {
     "type": "generative_img2sentence",
     "max_decoding_steps": max_decoding_steps,
-    "attention": {"type": "additive", "vector_dim": target_embedding_dim, "matrix_dim": encoder_dim},
+    "attention": {"type": "additive", "vector_dim": encoder_dim, "matrix_dim": encoder_dim},
     "target_embedding_dim": target_embedding_dim,
     "beam_size": beam_size
   },
