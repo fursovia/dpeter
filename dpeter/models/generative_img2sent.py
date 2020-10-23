@@ -16,7 +16,7 @@ from allennlp.nn.beam_search import BeamSearch
 
 
 from dpeter.constants import END_TOKEN, START_TOKEN
-from dpeter.modules.image_encoder import InceptionEncoder
+from dpeter.modules.image_encoder import InceptionEncoder, ImageEncoder
 from dpeter.modules.metrics import CompetitionMetric
 
 
@@ -29,7 +29,7 @@ class GenerativeImg2Sentence(Model):
         vocab: Vocabulary,
         max_decoding_steps: int,
         attention: Attention,
-        encoder=InceptionEncoder(),
+        encoder: ImageEncoder = InceptionEncoder(),
         beam_size: int = 1,
         target_embedding_dim: int = 64,
         scheduled_sampling_ratio: float = 0.0,
@@ -365,7 +365,7 @@ class GenerativeImg2Sentence(Model):
                 if self._end_index in indices:
                     indices = indices[: indices.index(self._end_index)]
                 predicted_tokens = [
-                    self.vocab.get_token_from_index(x, namespace=self._target_namespace)
+                    self.vocab.get_token_from_index(x, namespace=self.target_namespace)
                     for x in indices
                 ]
                 batch_predicted_tokens.append(predicted_tokens)
