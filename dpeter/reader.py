@@ -1,5 +1,4 @@
 from typing import List, Optional
-import logging
 import random
 
 import numpy as np
@@ -14,9 +13,6 @@ from dpeter.constants import END_TOKEN, START_TOKEN, HEIGHT, WIDTH, NUM_CHANNELS
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
 from dpeter.utils.data import load_jsonlines, load_image, load_text
-
-
-logger = logging.getLogger(__name__)
 
 
 @DatasetReader.register("peter_reader")
