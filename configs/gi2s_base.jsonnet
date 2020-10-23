@@ -1,8 +1,5 @@
 local COMMON = import 'common/basic.jsonnet';
 
-// do not change image size
-local image_size = [1024, 128];
-
 local binarizator = "null";
 local augmentator = "null";
 
@@ -14,7 +11,6 @@ local beam_size = 1;
 {
   "dataset_reader": {
     "type": "peter_reader",
-    "image_size": image_size,
     "binarizator": binarizator,
     "augmentator": augmentator,
     "shuffle": false,
@@ -22,7 +18,6 @@ local beam_size = 1;
   },
 //  "validation_dataset_reader": {
 //    "type": "peter_reader",
-//    "image_size": image_size,
 //    "binarizator": binarizator,
 //    "augmentator": null,
 //    "shuffle": false,
