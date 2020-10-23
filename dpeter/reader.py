@@ -1,8 +1,9 @@
 from typing import List, Optional
-import random
 
 import numpy as np
 import cv2
+import jsonlines
+from allennlp.common.file_utils import cached_path
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import TextField, LabelField, ArrayField
 from allennlp.data.instance import Instance
@@ -12,7 +13,7 @@ from allennlp.data.tokenizers import CharacterTokenizer, Token
 from dpeter.constants import END_TOKEN, START_TOKEN, HEIGHT, WIDTH, NUM_CHANNELS, WHITE_CONSTANT
 from dpeter.modules.augmentator import ImageAugmentator, NullAugmentator
 from dpeter.modules.binarizator import ImageBinarizator, NullBinarizator
-from dpeter.utils.data import load_jsonlines, load_image, load_text
+from dpeter.utils.data import load_image, load_text
 
 
 @DatasetReader.register("peter_reader")
@@ -21,7 +22,6 @@ class PeterReader(DatasetReader):
         self,
         binarizator: Optional[ImageBinarizator] = None,
         augmentator: Optional[ImageAugmentator] = None,
-        shuffle: bool = False,
         add_start_end_tokens: bool = True,
         lazy: bool = False,
         manual_multi_process_sharding: bool = False,
@@ -30,7 +30,6 @@ class PeterReader(DatasetReader):
 
         self._binarizator = binarizator or NullBinarizator()
         self._augmentator = augmentator or NullAugmentator()
-        self._shuffle = shuffle
         self._add_start_end_tokens = add_start_end_tokens
         self._tokenizer = CharacterTokenizer()
         self._start_token = Token(START_TOKEN)
@@ -104,19 +103,16 @@ class PeterReader(DatasetReader):
 
     def _read(self, file_path: str):
 
-        data = load_jsonlines(file_path)
-        if self._shuffle:
-            random.shuffle(data)
+        with jsonlines.open(cached_path(file_path), "r") as reader:
+            for items in reader:
+                image_path = items["image_path"]
+                image = load_image(image_path)
 
-        for items in data:
-            image_path = items["image_path"]
-            image = load_image(image_path)
+                text_path = items.get("text_path")
+                if text_path is not None:
+                    text = load_text(text_path)
+                else:
+                    text = None
 
-            text_path = items.get("text_path")
-            if text_path is not None:
-                text = load_text(text_path)
-            else:
-                text = None
-
-            instance = self.text_to_instance(image=image, text=text)
-            yield instance
+                instance = self.text_to_instance(image=image, text=text)
+                yield instance
