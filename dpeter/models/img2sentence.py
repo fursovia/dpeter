@@ -8,6 +8,7 @@ from allennlp.nn.regularizers import RegularizerApplicator
 from allennlp.nn.util import get_token_ids_from_text_field_tensors, weighted_sum
 from allennlp.data.vocabulary import DEFAULT_PADDING_TOKEN, DEFAULT_OOV_TOKEN
 from allennlp.modules.matrix_attention import BilinearMatrixAttention
+from allennlp.nn import Activation
 
 from dpeter.models.inception import get_inception_encoder
 from dpeter.modules.metrics import CompetitionMetric
@@ -53,6 +54,7 @@ class Img2Sentence(Model):
             matrix_1_dim=self._emb_dim,
             matrix_2_dim=self.NUM_CHANNELS,
             use_input_biases=True,
+            activation=Activation.by_name("tanh")()
         )
         # self._attention = SpatialAttention(
         #     num_channels=self.NUM_CHANNELS,
