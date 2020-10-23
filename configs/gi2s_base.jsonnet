@@ -15,14 +15,12 @@ local target_decoder_layers = 1;
     "type": "peter_reader",
     "binarizator": binarizator,
     "augmentator": augmentator,
-    "shuffle": false,
     "lazy": false
   },
   "validation_dataset_reader": {
     "type": "peter_reader",
     "binarizator": binarizator,
     "augmentator": null,
-    "shuffle": false,
     "lazy": false
   },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),

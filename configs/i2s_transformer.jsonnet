@@ -16,14 +16,12 @@ local attention_vector_dim = 128;
     "type": "peter_reader",
     "binarizator": binarizator,
     "augmentator": augmentator,
-    "shuffle": true,
     "lazy": true
   },
   "validation_dataset_reader": {
     "type": "peter_reader",
     "binarizator": binarizator,
     "augmentator": null,
-    "shuffle": false,
     "lazy": false
   },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
