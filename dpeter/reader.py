@@ -48,9 +48,9 @@ class PeterReader(DatasetReader):
     def _resize_image(self, img: np.ndarray) -> np.ndarray:
         w, h, _ = img.shape
 
-        if w > h * 2:
-            img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
-            w, h, _ = img.shape
+        # if w > h * 2:
+        #     img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        #     w, h, _ = img.shape
 
         new_w = 128
         new_h = int(h * (new_w / w))
