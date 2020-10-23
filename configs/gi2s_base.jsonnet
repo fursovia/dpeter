@@ -7,6 +7,8 @@ local encoder_dim = 288;
 local target_embedding_dim = 128;
 local max_decoding_steps = 80;
 local beam_size = 1;
+local scheduled_sampling_ratio = 0.2;
+local target_decoder_layers = 1;
 
 {
   "dataset_reader": {
@@ -16,13 +18,13 @@ local beam_size = 1;
     "shuffle": false,
     "lazy": false
   },
-//  "validation_dataset_reader": {
-//    "type": "peter_reader",
-//    "binarizator": binarizator,
-//    "augmentator": null,
-//    "shuffle": false,
-//    "lazy": false
-//  },
+  "validation_dataset_reader": {
+    "type": "peter_reader",
+    "binarizator": binarizator,
+    "augmentator": null,
+    "shuffle": false,
+    "lazy": false
+  },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
   "validation_data_path": std.extVar("VALID_DATA_PATH"),
   "model": {
@@ -30,7 +32,9 @@ local beam_size = 1;
     "max_decoding_steps": max_decoding_steps,
     "attention": {"type": "additive", "vector_dim": encoder_dim, "matrix_dim": encoder_dim},
     "target_embedding_dim": target_embedding_dim,
-    "beam_size": beam_size
+    "beam_size": beam_size,
+    "scheduled_sampling_ratio": scheduled_sampling_ratio,
+    "target_decoder_layers": target_decoder_layers
   },
   "data_loader": COMMON['data_loader'],
   "trainer": {
