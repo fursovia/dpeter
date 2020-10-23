@@ -41,8 +41,8 @@ local beam_size = 3;
   "trainer": {
     // -loss
     "validation_metric": "-loss",
-    "num_epochs": 300,
-    "patience": 30,
+    "num_epochs": 100,
+    "patience": null,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
