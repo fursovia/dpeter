@@ -9,7 +9,7 @@ local augmentator = "null";
 local encoder_dim = 288;
 local target_embedding_dim = 128;
 local max_decoding_steps = 80;
-local beam_size = 3;
+local beam_size = 1;
 
 {
   "dataset_reader": {
