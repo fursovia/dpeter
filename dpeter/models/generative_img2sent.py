@@ -388,5 +388,5 @@ class GenerativeImg2Sentence(Model):
 
             all_predicted_tokens.append(batch_predicted_tokens)
         output_dict["predicted_tokens"] = all_predicted_tokens
-        output_dict['sentences'] = "".join(output_dict['predicted_tokens'][0])
+        output_dict['sentences'] = ["".join(tokens[0]) for tokens in all_predicted_tokens]
         return output_dict
