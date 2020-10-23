@@ -42,7 +42,7 @@ local beam_size = 1;
     // -loss
     "validation_metric": "-loss",
     "num_epochs": 500,
-    "patience": 40,
+    "patience": 50,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
