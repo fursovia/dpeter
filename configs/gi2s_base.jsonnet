@@ -17,8 +17,8 @@ local beam_size = 3;
     "image_size": image_size,
     "binarizator": binarizator,
     "augmentator": augmentator,
-    "shuffle": true,
-    "lazy": true
+    "shuffle": false,
+    "lazy": false
   },
 //  "validation_dataset_reader": {
 //    "type": "peter_reader",
