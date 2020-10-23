@@ -4,7 +4,7 @@ local COMMON = import 'common/basic.jsonnet';
 local image_size = [1024, 128];
 
 local binarizator = "null";
-local augmentator = "google";
+local augmentator = "null";
 
 local gru_input_size = 128;
 local gru_hidden_size = 256;
