@@ -124,7 +124,14 @@ class GenerativeImg2Sentence(Model):
     def _encode(self, image: torch.Tensor) -> Dict[str, torch.Tensor]:
         # shape: (batch_size, max_input_sequence_length, encoder_output_dim)
         encoder_outputs = self._encoder(image)
-        source_mask = torch.ones_like(encoder_outputs, dtype=torch.bool, device=image.device)
+        batch_size = encoder_outputs.size(0)
+        max_input_sequence_length = encoder_outputs.size(1)
+        source_mask = torch.ones(
+            batch_size,
+            max_input_sequence_length,
+            dtype=torch.bool,
+            device=image.device
+        )
         return {"source_mask": source_mask, "encoder_outputs": encoder_outputs}
 
     def _init_decoder_state(self, state: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
