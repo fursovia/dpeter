@@ -36,7 +36,7 @@ class InceptionEncoder(ImageEncoder):
         return 3
 
     def forward(self, image: torch.Tensor) -> torch.Tensor:
-        features = self._encoder(image)
+        features = self._encoder(image.transpose(1, 3))
         features = features.transpose(1, 3)
         # 1625 tokens
         features = features.reshape(image.size(0), -1, self.get_output_dim())
