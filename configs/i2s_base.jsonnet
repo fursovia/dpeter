@@ -1,7 +1,7 @@
 local COMMON = import 'common/basic.jsonnet';
 
 local binarizator = "null";
-local augmentator = "null";
+local augmentator = "google";
 
 local gru_input_size = 128;
 local gru_hidden_size = 256;
@@ -58,9 +58,9 @@ local attention_vector_dim = 128;
   "data_loader": COMMON['data_loader'],
   "trainer": {
     // -loss
-    "validation_metric": "-cer",
-    "num_epochs": 300,
-    "patience": 20,
+    "validation_metric": "-loss",
+    "num_epochs": 500,
+    "patience": 50,
     "optimizer": {
       "type": "adam",
       "lr": 0.001
