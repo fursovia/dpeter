@@ -6,9 +6,10 @@ local augmentator = "google";
 local encoder_dim = 288;
 local target_embedding_dim = 128;
 local max_decoding_steps = 80;
-local beam_size = 1;
+local beam_size = 5;
 local scheduled_sampling_ratio = 0.2;
 local target_decoder_layers = 1;
+local gamma = 2.0;
 
 {
   "dataset_reader": {
@@ -33,7 +34,8 @@ local target_decoder_layers = 1;
     "target_embedding_dim": target_embedding_dim,
     "beam_size": beam_size,
     "scheduled_sampling_ratio": scheduled_sampling_ratio,
-    "target_decoder_layers": target_decoder_layers
+    "target_decoder_layers": target_decoder_layers,
+    "gamma": gamma
   },
   "data_loader": COMMON['data_loader'],
   "trainer": {

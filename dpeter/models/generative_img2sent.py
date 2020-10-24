@@ -35,6 +35,7 @@ class GenerativeImg2Sentence(Model):
         target_embedding_dim: int = 64,
         scheduled_sampling_ratio: float = 0.0,
         target_decoder_layers: int = 1,
+        gamma: float = 2.0,
     ) -> None:
         super().__init__(vocab)
         self._target_decoder_layers = target_decoder_layers
@@ -84,6 +85,7 @@ class GenerativeImg2Sentence(Model):
         else:
             self._decoder_cell = LSTMCell(self._decoder_input_dim, self._decoder_output_dim)
 
+        self._gamma = gamma
         self._output_projection_layer = Linear(self._decoder_output_dim, num_classes)
         self._metric = CompetitionMetric(self.vocab)
 
@@ -337,8 +339,8 @@ class GenerativeImg2Sentence(Model):
 
         return attended_input
 
-    @staticmethod
     def _get_loss(
+        self,
         logits: torch.LongTensor,
         targets: torch.LongTensor,
         target_mask: torch.BoolTensor,
@@ -354,7 +356,7 @@ class GenerativeImg2Sentence(Model):
             targets=relevant_targets,
             weights=relevant_mask,
             label_smoothing=None,
-            gamma=1.5,
+            gamma=self._gamma,
             alpha=None
         )
 
