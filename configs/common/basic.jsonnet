@@ -5,7 +5,7 @@ local batches_per_epoch = 150;
 
 {
   "data_loader": {
-    "shuffle": true,
+    "shuffle": false,
     "batch_size": batch_size,
     "batches_per_epoch": batches_per_epoch,
     "num_workers": 20,

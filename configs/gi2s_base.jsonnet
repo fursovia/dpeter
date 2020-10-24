@@ -15,7 +15,7 @@ local target_decoder_layers = 1;
     "type": "peter_reader",
     "binarizator": binarizator,
     "augmentator": augmentator,
-    "lazy": false
+    "lazy": true
   },
   "validation_dataset_reader": {
     "type": "peter_reader",
