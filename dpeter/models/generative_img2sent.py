@@ -90,6 +90,7 @@ class GenerativeImg2Sentence(Model):
         self._output_projection_layer = Linear(self._decoder_output_dim, num_classes)
         self._metric = CompetitionMetric(self.vocab)
 
+        # we increase it by using `track_epoch_callback`
         self.epoch = 1
 
     def set_scheduled_sampling_ratio(self):
