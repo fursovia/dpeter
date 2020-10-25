@@ -7,9 +7,9 @@ local encoder_dim = 288;
 local target_embedding_dim = 128;
 local max_decoding_steps = 80;
 local beam_size = 5;
-local scheduled_sampling_ratio = 0.2;
 local target_decoder_layers = 1;
 local gamma = 2.0;
+local scheduled_sampling_ratio = 0.0;
 
 {
   "dataset_reader": {
@@ -47,7 +47,7 @@ local gamma = 2.0;
       "type": "adam",
       "lr": 0.001
     },
-    "epoch_callbacks": ["wandb"],
+    "epoch_callbacks": ["wandb", "track_epoch_callback"],
     "cuda_device": 0
   }
 }

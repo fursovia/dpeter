@@ -90,6 +90,16 @@ class GenerativeImg2Sentence(Model):
         self._output_projection_layer = Linear(self._decoder_output_dim, num_classes)
         self._metric = CompetitionMetric(self.vocab)
 
+        self.epoch = 1
+
+    def set_scheduled_sampling_ratio(self):
+
+        def _inverse_sigmoid_decay(i: int, k: int = 30):
+            # http://papers.nips.cc/paper/5956-scheduled-sampling-for-sequence-prediction-with-recurrent-neural-networks.pdf
+            return float(k / (k + numpy.exp(i / k)))
+
+        self._scheduled_sampling_ratio = _inverse_sigmoid_decay(self.epoch)
+
     def take_step(
         self, last_predictions: torch.Tensor, state: Dict[str, torch.Tensor], step: int
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
@@ -108,6 +118,9 @@ class GenerativeImg2Sentence(Model):
             text: Optional[TextFieldTensors] = None,
             **kwargs,
     ) -> Dict[str, torch.Tensor]:
+
+        self.set_scheduled_sampling_ratio()
+
         # source_mask, encoder_outputs
         state = self._encode(image)
 
