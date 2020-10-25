@@ -24,6 +24,7 @@ from dpeter.modules.metrics import CompetitionMetric
 class GenerativeImg2Sentence(Model):
     target_namespace = "tokens"
     MAX_SENTENCE_LENGTH = 128
+    INITIAL_STATE_NUM_FEATURES = 50
 
     def __init__(
         self,
@@ -145,7 +146,7 @@ class GenerativeImg2Sentence(Model):
     def _init_decoder_state(self, state: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         batch_size = state["source_mask"].size(0)
         # shape: (batch_size, num_channels)
-        final_encoder_output = torch.mean(state["encoder_outputs"], dim=1)
+        final_encoder_output = torch.mean(state["encoder_outputs"][:, :self.INITIAL_STATE_NUM_FEATURES], dim=1)
 
         # Initialize the decoder hidden state with the final output of the encoder.
         # shape: (batch_size, decoder_output_dim)
