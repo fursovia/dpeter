@@ -1,7 +1,7 @@
 local dataset_size = 5000;
 local batch_size = 32;
-// 5000 / 32 =
-local batches_per_epoch = 150;
+// 10000 / 32 =
+local batches_per_epoch = 300;
 
 {
   "data_loader": {
