@@ -39,5 +39,6 @@ class InceptionEncoder(ImageEncoder):
         features = self._encoder(image.transpose(1, 3))
         features = features.transpose(1, 3)
         # 1625 tokens
+        # (batch_size, 165 * 25, 288)
         features = features.reshape(image.size(0), -1, self.get_output_dim())
         return features

@@ -1,9 +1,14 @@
 # dpeter
 
+```bash
+poetry install
+poetry shell
+exit
+```
+
 
 ```bash
-export WANDB_API_KEY=""
-export WANDB_MODE="dryrun"
+wandb login $YOUR_API_KEY
 
 CUDA_VISIBLE_DEVICES="0" train configs/lc_base.jsonnet
 ```
