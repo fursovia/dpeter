@@ -1,3 +1,6 @@
+import random
+
+import cv2
 import numpy as np
 from allennlp.common import Registrable
 from torchvision import transforms
@@ -96,5 +99,8 @@ class GoogleAugmentator(ImageAugmentator):
         if num_first_zeros > 0:
             add_zeros = np.full((HEIGHT, num_first_zeros, NUM_CHANNELS), WHITE_CONSTANT).astype(np.uint8)
             img = np.concatenate((img[:, num_first_zeros:], add_zeros), axis=1)
+
+        if random.random() < 0.15:
+            img = cv2.GaussianBlur(img, (3, 3), 1.0)
 
         return img
