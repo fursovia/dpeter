@@ -96,7 +96,7 @@ class GenerativeImg2Sentence(Model):
 
         def _inverse_sigmoid_decay(i: int, k: int = 30):
             # http://papers.nips.cc/paper/5956-scheduled-sampling-for-sequence-prediction-with-recurrent-neural-networks.pdf
-            return float(k / (k + numpy.exp(i / k)))
+            return 1.0 - float(k / (k + numpy.exp(i / k)))
 
         self._scheduled_sampling_ratio = _inverse_sigmoid_decay(self.epoch)
 
