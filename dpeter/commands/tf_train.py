@@ -50,7 +50,11 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
     # model.load_checkpoint(target=checkpoint_path)
 
     model.summary(str(serialization_dir), "summary.txt")
-    callbacks = model.get_callbacks(logdir=str(serialization_dir), checkpoint=checkpoint_path, verbose=1)
+    callbacks = model.get_callbacks(
+        logdir=str(serialization_dir),
+        checkpoint=checkpoint_path,
+        verbose=1
+    )
 
     start_time = datetime.datetime.now()
 
