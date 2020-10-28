@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=16)
     args = parser.parse_args()
 
-    raw_path = os.path.join("..", "raw", args.source)
+    raw_path = os.path.join("raw", args.source)
     source_path = os.path.join("..", "data", f"{args.source}.hdf5")
     output_path = os.path.join("..", "output", args.source, args.arch)
     target_path = os.path.join(output_path, "checkpoint_weights.hdf5")

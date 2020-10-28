@@ -14,7 +14,6 @@ Data preproc functions:
 import re
 import os
 import cv2
-import html
 import string
 import numpy as np
 
@@ -94,30 +93,36 @@ Preprocess metodology based in:
 def preprocess(img, input_size):
     """Make the process with the `input_size` to the scale resize"""
 
-    def imread(path):
-        img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-        u, i = np.unique(np.array(img).flatten(), return_inverse=True)
-        background = int(u[np.argmax(np.bincount(i))])
-        return img, background
+    # def imread(path):
+    #     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    #     background = 255
+    #     # u, i = np.unique(np.array(img).flatten(), return_inverse=True)
+    #     # background = int(u[np.argmax(np.bincount(i))])
+    #     return img, background
 
     if isinstance(img, str):
-        img, bg = imread(img)
+        img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
 
-    if isinstance(img, tuple):
-        image, boundbox = img
-        img, bg = imread(image)
+    bg = 255
+    # img, bg = imread(img)
+    # print(img)
 
-        for i in range(len(boundbox)):
-            if isinstance(boundbox[i], float):
-                total = len(img) if i < 2 else len(img[0])
-                boundbox[i] = int(total * boundbox[i])
-            else:
-                boundbox[i] = int(boundbox[i])
+    # if isinstance(img, tuple):
+    #     image, boundbox = img
+    #     img, bg = imread(image)
+    #
+    #     for i in range(len(boundbox)):
+    #         if isinstance(boundbox[i], float):
+    #             total = len(img) if i < 2 else len(img[0])
+    #             boundbox[i] = int(total * boundbox[i])
+    #         else:
+    #             boundbox[i] = int(boundbox[i])
+    #
+    #     img = np.asarray(img[boundbox[0]:boundbox[1], boundbox[2]:boundbox[3]], dtype=np.uint8)
 
-        img = np.asarray(img[boundbox[0]:boundbox[1], boundbox[2]:boundbox[3]], dtype=np.uint8)
 
     wt, ht, _ = input_size
-    h, w = np.asarray(img).shape
+    h, w = np.array(img).shape
     f = max((w / wt), (h / ht))
 
     new_size = (max(min(wt, int(w / f)), 1), max(min(ht, int(h / f)), 1))
@@ -158,19 +163,19 @@ def text_standardize(text):
     if text is None:
         return ""
 
-    text = html.unescape(text).replace("\\n", "").replace("\\t", "")
-
-    text = RE_RESERVED_CHAR_FILTER.sub("", text)
-    text = RE_DASH_FILTER.sub("-", text)
-    text = RE_APOSTROPHE_FILTER.sub("'", text)
-    text = RE_LEFT_PARENTH_FILTER.sub("(", text)
-    text = RE_RIGHT_PARENTH_FILTER.sub(")", text)
-    text = RE_BASIC_CLEANER.sub("", text)
-
-    text = text.lstrip(LEFT_PUNCTUATION_FILTER)
-    text = text.rstrip(RIGHT_PUNCTUATION_FILTER)
-    text = text.translate(str.maketrans({c: f" {c} " for c in string.punctuation}))
-    text = NORMALIZE_WHITESPACE_REGEX.sub(" ", text.strip())
+    # text = html.unescape(text).replace("\\n", "").replace("\\t", "")
+    #
+    # text = RE_RESERVED_CHAR_FILTER.sub("", text)
+    # text = RE_DASH_FILTER.sub("-", text)
+    # text = RE_APOSTROPHE_FILTER.sub("'", text)
+    # text = RE_LEFT_PARENTH_FILTER.sub("(", text)
+    # text = RE_RIGHT_PARENTH_FILTER.sub(")", text)
+    # text = RE_BASIC_CLEANER.sub("", text)
+    #
+    # text = text.lstrip(LEFT_PUNCTUATION_FILTER)
+    # text = text.rstrip(RIGHT_PUNCTUATION_FILTER)
+    # text = text.translate(str.maketrans({c: f" {c} " for c in string.punctuation}))
+    # text = NORMALIZE_WHITESPACE_REGEX.sub(" ", text.strip())
 
     return text
 

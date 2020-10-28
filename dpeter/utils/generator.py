@@ -5,13 +5,14 @@ Image renderings and text are created on the fly each time.
 
 from itertools import groupby
 
-import data.preproc as pp
 import h5py
 import numpy as np
 import unicodedata
 
+import dpeter.utils.preprocessing as pp
 
-class DataGenerator():
+
+class DataGenerator:
     """Generator class with data streaming"""
 
     def __init__(self, source, batch_size, charset, max_text_length, predict=False):
