@@ -81,8 +81,10 @@ class Dataset:
                 image_path = path_to_image_and_words["image_path"]
                 words_path = path_to_image_and_words["text_path"]
 
-                text = load_text(words_path)
-                dataset[partition]['gt'].append(text)
+                # text = load_text(words_path)
+                with open(words_path) as f:
+                    dataset[partition]['gt'].append(f.read().strip())
+
                 dataset[partition]['dt'].append(image_path)
 
         return dataset

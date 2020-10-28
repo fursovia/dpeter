@@ -18,7 +18,7 @@ class DataGenerator:
     def __init__(self, source, batch_size, charset, max_text_length, predict=False):
         self.tokenizer = Tokenizer(charset, max_text_length)
         self.batch_size = batch_size
-        self.partitions = ['test'] if predict else ['train', 'valid', 'test']
+        self.partitions = ['test'] if predict else ['train', 'valid']
 
         self.size = dict()
         self.steps = dict()
@@ -112,7 +112,7 @@ class DataGenerator:
             yield x_test
 
 
-class Tokenizer():
+class Tokenizer:
     """Manager tokens functions and charset/dictionary properties"""
 
     def __init__(self, chars, max_text_length=128):
@@ -128,7 +128,7 @@ class Tokenizer():
     def encode(self, text):
         """Encode text to vector"""
 
-        text = unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("ASCII")
+        # text = unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("ASCII")
         text = " ".join(text.split())
 
         groups = ["".join(group) for _, group in groupby(text)]

@@ -9,7 +9,7 @@ exit
 ## TF
 
 ```python
-create_dataset ./data
+create_dataset --data-dir ./data
 ```
 
 

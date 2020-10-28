@@ -11,10 +11,8 @@ Data preproc functions:
     text_standardize: preprocess and standardize sentence
 """
 
-import re
 import os
 import cv2
-import string
 import numpy as np
 
 
@@ -135,49 +133,13 @@ def preprocess(img, input_size):
     return img
 
 
-"""
-DeepSpell based text cleaning process.
-    Tal Weiss.
-    Deep Spelling.
-    Medium: https://machinelearnings.co/deep-spelling-9ffef96a24f6#.2c9pu8nlm
-    Github: https://github.com/MajorTal/DeepSpell
-"""
-
-RE_DASH_FILTER = re.compile(r'[\-\˗\֊\‐\‑\‒\–\—\⁻\₋\−\﹣\－]', re.UNICODE)
-RE_APOSTROPHE_FILTER = re.compile(r'&#39;|[ʼ՚＇‘’‛❛❜ߴߵ`‵´ˊˋ{}{}{}{}{}{}{}{}{}]'.format(
-    chr(768), chr(769), chr(832), chr(833), chr(2387),
-    chr(5151), chr(5152), chr(65344), chr(8242)), re.UNICODE)
-RE_RESERVED_CHAR_FILTER = re.compile(r'[¶¤«»]', re.UNICODE)
-RE_LEFT_PARENTH_FILTER = re.compile(r'[\(\[\{\⁽\₍\❨\❪\﹙\（]', re.UNICODE)
-RE_RIGHT_PARENTH_FILTER = re.compile(r'[\)\]\}\⁾\₎\❩\❫\﹚\）]', re.UNICODE)
-RE_BASIC_CLEANER = re.compile(r'[^\w\s{}]'.format(re.escape(string.punctuation)), re.UNICODE)
-
-LEFT_PUNCTUATION_FILTER = """!%&),.:;<=>?@\\]^_`|}~"""
-RIGHT_PUNCTUATION_FILTER = """"(/<=>@[\\^_`{|~"""
-NORMALIZE_WHITESPACE_REGEX = re.compile(r'[^\S\n]+', re.UNICODE)
-
-
 def text_standardize(text):
     """Organize/add spaces around punctuation marks"""
 
     if text is None:
         return ""
 
-    # text = html.unescape(text).replace("\\n", "").replace("\\t", "")
-    #
-    # text = RE_RESERVED_CHAR_FILTER.sub("", text)
-    # text = RE_DASH_FILTER.sub("-", text)
-    # text = RE_APOSTROPHE_FILTER.sub("'", text)
-    # text = RE_LEFT_PARENTH_FILTER.sub("(", text)
-    # text = RE_RIGHT_PARENTH_FILTER.sub(")", text)
-    # text = RE_BASIC_CLEANER.sub("", text)
-    #
-    # text = text.lstrip(LEFT_PUNCTUATION_FILTER)
-    # text = text.rstrip(RIGHT_PUNCTUATION_FILTER)
-    # text = text.translate(str.maketrans({c: f" {c} " for c in string.punctuation}))
-    # text = NORMALIZE_WHITESPACE_REGEX.sub(" ", text.strip())
-
-    return text
+    return text.strip()
 
 
 def generate_kaldi_assets(output_path, dtgen, predicts):
