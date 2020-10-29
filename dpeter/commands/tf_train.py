@@ -26,7 +26,7 @@ NUM_EPOCHS = 100
 CHARSET = " оаетнисрлвдкмпубiѣяычгзъжхшйюфц1ь+щ[0]27345э8erps96tfіhcn⊕m⊗daglb)–|×o/kuǂ…"
 
 
-def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], k: int = 50) -> np.ndarray:
+def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], k: int = NUM_SAMPLES) -> np.ndarray:
 
     dists = []
     for yt, yp in zip(y_true, y_pred):
