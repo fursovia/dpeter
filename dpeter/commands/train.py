@@ -8,12 +8,10 @@ from allennlp.commands.train import train_model
 from allennlp.common import Params
 import wandb
 
-import dpeter
 from dpeter.commands.predict import predict
+from dpeter.constants import PROJECT_NAME
 from dpeter.utils.data import load_jsonlines, load_images, load_texts
 
-
-PROJECT_NAME = "digital_peter"
 NUM_SAMPLES = 50
 app = typer.Typer()
 
