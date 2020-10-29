@@ -95,6 +95,10 @@ def preprocess(path, input_size):
 
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
+    w, h = img.shape
+    if w > h * 2:
+        img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
     wt, ht, _ = input_size
     h, w = np.array(img).shape
     f = max((w / wt), (h / ht))

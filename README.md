@@ -10,7 +10,7 @@ exit
 
 ```bash
 create_dataset --data-dir ./data
-CUDA_VISIBLE_DEVICES="7" tf_train ./data
+CUDA_VISIBLE_DEVICES="2" tf_train ./data
 ```
 
 
