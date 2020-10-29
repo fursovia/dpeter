@@ -1,7 +1,6 @@
 """Dataset reader and process"""
 
 import os
-import random
 
 from tqdm import tqdm
 
@@ -35,20 +34,20 @@ class Dataset:
     def preprocess_partitions(self, input_size):
         """Preprocess images and sentences from partitions"""
 
-        for y in self.partitions:
-            arange = range(len(self.dataset[y]['gt']))
+        for partition in self.partitions:
+            arange = range(len(self.dataset[partition]['gt']))
 
             for i in reversed(arange):
-                text = pp.text_standardize(self.dataset[y]['gt'][i])
+                text = pp.text_standardize(self.dataset[partition]['gt'][i])
 
-                self.dataset[y]['gt'][i] = str(text).encode()
+                self.dataset[partition]['gt'][i] = str(text).encode()
 
             results = []
-            print(f"Partition: {y}")
-            for path in tqdm(self.dataset[y]['dt']):
+            print(f"Partition: {partition}")
+            for path in tqdm(self.dataset[partition]['dt']):
                 results.append(pp.preprocess(str(path), input_size=input_size))
 
-            self.dataset[y]['dt'] = results
+            self.dataset[partition]['dt'] = results
 
     def _init_dataset(self):
         dataset = dict()
@@ -57,18 +56,6 @@ class Dataset:
             dataset[i] = {"dt": [], "gt": []}
 
         return dataset
-
-    def _shuffle(self, *ls):
-        random.seed(42)
-
-        if len(ls) == 1:
-            li = list(*ls)
-            random.shuffle(li)
-            return li
-
-        li = list(zip(*ls))
-        random.shuffle(li)
-        return zip(*li)
 
     def _dpeter(self):
         dataset = self._init_dataset()
@@ -81,9 +68,8 @@ class Dataset:
                 image_path = path_to_image_and_words["image_path"]
                 words_path = path_to_image_and_words["text_path"]
 
-                # text = load_text(words_path)
-                with open(words_path) as f:
-                    dataset[partition]['gt'].append(f.read().strip())
+                text = load_text(words_path)
+                dataset[partition]['gt'].append(text)
 
                 dataset[partition]['dt'].append(image_path)
 

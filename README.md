@@ -8,8 +8,9 @@ exit
 
 ## TF
 
-```python
+```bash
 create_dataset --data-dir ./data
+CUDA_VISIBLE_DEVICES="7" tf_train ./data
 ```
 
 
