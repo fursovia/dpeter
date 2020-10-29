@@ -15,6 +15,8 @@ import os
 import cv2
 import numpy as np
 
+from dpeter.constants import WHITE_CONSTANT
+
 
 def adjust_to_see(img):
     """Rotate and transpose to image visualize (cv2 method or jupyter notebook)"""
@@ -88,36 +90,10 @@ Preprocess metodology based in:
 """
 
 
-def preprocess(img, input_size):
+def preprocess(path, input_size):
     """Make the process with the `input_size` to the scale resize"""
 
-    # def imread(path):
-    #     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    #     background = 255
-    #     # u, i = np.unique(np.array(img).flatten(), return_inverse=True)
-    #     # background = int(u[np.argmax(np.bincount(i))])
-    #     return img, background
-
-    if isinstance(img, str):
-        img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
-
-    bg = 255
-    # img, bg = imread(img)
-    # print(img)
-
-    # if isinstance(img, tuple):
-    #     image, boundbox = img
-    #     img, bg = imread(image)
-    #
-    #     for i in range(len(boundbox)):
-    #         if isinstance(boundbox[i], float):
-    #             total = len(img) if i < 2 else len(img[0])
-    #             boundbox[i] = int(total * boundbox[i])
-    #         else:
-    #             boundbox[i] = int(boundbox[i])
-    #
-    #     img = np.asarray(img[boundbox[0]:boundbox[1], boundbox[2]:boundbox[3]], dtype=np.uint8)
-
+    img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
     wt, ht, _ = input_size
     h, w = np.array(img).shape
@@ -126,7 +102,7 @@ def preprocess(img, input_size):
     new_size = (max(min(wt, int(w / f)), 1), max(min(ht, int(h / f)), 1))
     img = cv2.resize(img, new_size)
 
-    target = np.ones([ht, wt], dtype=np.uint8) * bg
+    target = np.full([ht, wt], fill_value=WHITE_CONSTANT, dtype=np.uint8)
     target[0:new_size[1], 0:new_size[0]] = img
     img = cv2.transpose(target)
 
