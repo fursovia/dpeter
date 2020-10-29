@@ -87,6 +87,8 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
         verbose=1
     )
 
+    wandb.save(checkpoint_path)
+
     total_time = datetime.datetime.now() - start_time
 
     loss = h.history['loss']
