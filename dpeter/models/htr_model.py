@@ -137,7 +137,7 @@ class HTRModel:
         else:
             self.learning_schedule = False
 
-        optimizer = tf.keras.optimizers.RMSprop(learning_rate=learning_rate)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
         # create and compile
         self.model = Model(inputs=inputs, outputs=outputs)
