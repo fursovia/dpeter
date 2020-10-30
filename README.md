@@ -22,3 +22,8 @@ CUDA_VISIBLE_DEVICES="0" train configs/lc_base.jsonnet
 ```
 
 
+## Predict 
+
+```bash
+bash bin/create_submit.sh
+```
