@@ -7,6 +7,7 @@ authors = ["fursovia <fursov.ia@gmail.com>"]
 [tool.poetry.scripts]
 train = 'dpeter.commands.train:app'
 tf_train = 'dpeter.commands.tf_train:app'
+tf_predict = 'dpeter.commands.tf_predict:app'
 create_dataset = 'dpeter.commands.create_dataset:app'
 
 [tool.poetry.dependencies]
