@@ -22,7 +22,7 @@ NUM_SAMPLES = 50
 ARCH = "flor"
 BATCH_SIZE = 16
 MAX_LENGTH = 80
-LEARNING_RATE = 0.003
+LEARNING_RATE = 0.001
 NUM_EPOCHS = 100
 CHARSET = " оаетнисрлвдкмпубiѣяычгзъжхшйюфц1ь+щ[0]27345э8erps96tfіhcn⊕m⊗daglb)–|×o/kuǂ…"
 
