@@ -12,6 +12,7 @@ from dpeter.utils.generator import DataGenerator
 from dpeter.models.htr_model import HTRModel
 from dpeter.utils.metrics import ocr_metrics
 from dpeter.utils.data import load_jsonlines, load_images, load_texts
+from dpeter.utils.preprocessing import rotate_maybe
 
 app = typer.Typer()
 
@@ -136,13 +137,17 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
         wandb.run.summary[key] = val
 
     valid_data = load_jsonlines(str(data_dir / "valid.json"))
+    sample_names = [Path(p['image_path']).stem for p in valid_data]
     images = load_images(valid_data)
+    images = [rotate_maybe(img) for img in images]
     texts = load_texts(valid_data)
     wandb.log(
         {
             "examples": [
-                wandb.Image(img, caption=f"true = {text}\npred = {pred}")
-                for img, pred, text in zip(images[:NUM_SAMPLES], predicts[:NUM_SAMPLES], texts[:NUM_SAMPLES])
+                wandb.Image(img, caption=f"{name}\ntrue = {text}\npred = {pred}")
+                for img, pred, text, name in zip(
+                    images[:NUM_SAMPLES], predicts[:NUM_SAMPLES], texts[:NUM_SAMPLES], sample_names[:NUM_SAMPLES]
+                )
             ]
         }
     )
@@ -151,7 +156,7 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
     wandb.log(
         {
             "worst_examples": [
-                wandb.Image(images[idx], caption=f"true = {texts[idx]}\npred = {predicts[idx]}")
+                wandb.Image(images[idx], caption=f"{sample_names[idx]}\ntrue = {texts[idx]}\npred = {predicts[idx]}")
                 for idx in worst_indexes
             ]
         }

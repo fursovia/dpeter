@@ -90,14 +90,19 @@ Preprocess metodology based in:
 """
 
 
+def rotate_maybe(img: np.ndarray) -> np.ndarray:
+    w, h = img.shape
+    if w > h * 2:
+        img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+    return img
+
+
 def preprocess(path, input_size):
     """Make the process with the `input_size` to the scale resize"""
 
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-
-    w, h = img.shape
-    if w > h * 2:
-        img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    img = rotate_maybe(img)
 
     wt, ht, _ = input_size
     h, w = np.array(img).shape
