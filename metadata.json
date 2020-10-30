@@ -1,4 +1,4 @@
 {
-  "image": "fursovia/dpeter",
+  "image": "fursovia/dpeter:hello",
   "entry_point": "python tf_predict.py ./presets/tf_models/last_submit"
 }
