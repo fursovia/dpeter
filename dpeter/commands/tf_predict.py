@@ -61,7 +61,13 @@ def main(serialization_dir: Path, data_dir: Optional[Path] = None, out_path: Opt
         names.append(image_path.stem)
 
     images = normalization(images)
-    predicts, probabilities = model.predict(images, batch_size=BATCH_SIZE, ctc_decode=True)
+    predicts, probabilities = model.predict(
+        images,
+        batch_size=BATCH_SIZE,
+        ctc_decode=True,
+        verbose=1,
+        steps=int(np.ceil(len(images) / BATCH_SIZE))
+    )
     predicts = [tokenizer.decode(x[0]) for x in predicts]
 
     out_path.mkdir(exist_ok=True, parents=True)
