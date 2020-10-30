@@ -16,6 +16,7 @@ def ocr_metrics(predicts, ground_truth, norm_accentuation=False, norm_punctuatio
         return (1, 1, 1)
 
     cer, wer, ser = [], [], []
+    cer_lens, wer_lens = [], []
 
     for (pd, gt) in zip(predicts, ground_truth):
         pd, gt = pd.lower(), gt.lower()
@@ -30,17 +31,22 @@ def ocr_metrics(predicts, ground_truth, norm_accentuation=False, norm_punctuatio
 
         pd_cer, gt_cer = list(pd), list(gt)
         dist = editdistance.eval(pd_cer, gt_cer)
-        cer.append(dist / (max(len(pd_cer), len(gt_cer))))
+        # cer.append(dist / (max(len(pd_cer), len(gt_cer))))
+        cer_lens.append(len(gt_cer))
+        cer.append(dist)
 
         pd_wer, gt_wer = pd.split(), gt.split()
         dist = editdistance.eval(pd_wer, gt_wer)
-        wer.append(dist / (max(len(pd_wer), len(gt_wer))))
+        # wer.append(dist / (max(len(pd_wer), len(gt_wer))))
+        wer_lens.append(len(gt_wer))
+        wer.append(dist)
 
         pd_ser, gt_ser = [pd], [gt]
         dist = editdistance.eval(pd_ser, gt_ser)
         ser.append(dist / (max(len(pd_ser), len(gt_ser))))
 
-    metrics = [cer, wer, ser]
-    metrics = np.mean(metrics, axis=1)
+    cer = sum(cer) / sum(cer_lens)
+    wer = sum(wer) / sum(wer_lens)
+    ser = np.mean(ser)
 
-    return metrics
+    return cer, wer, ser
