@@ -13,7 +13,7 @@ from tensorflow.keras.constraints import MaxNorm
 from tensorflow.keras.layers import Conv2D, Bidirectional, LSTM, GRU, Dense
 from tensorflow.keras.layers import Dropout, BatchNormalization, LeakyReLU, PReLU
 from tensorflow.keras.layers import Input, Add, Activation, Lambda, MaxPooling2D, Reshape
-from wandb.keras import WandbCallback
+# from wandb.keras import WandbCallback
 
 from dpeter.modules.layers import FullGatedConv2D, GatedConv2D, OctConv2D
 
@@ -118,7 +118,7 @@ class HTRModel:
                 factor=0.2,
                 patience=self.reduce_tolerance,
                 verbose=verbose),
-            WandbCallback(save_model=False)
+            # WandbCallback(save_model=False)
         ]
 
         return callbacks
