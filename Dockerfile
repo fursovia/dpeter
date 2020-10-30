@@ -27,3 +27,5 @@ COPY pyproject.toml poetry.lock /notebook/
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry install
+
+RUN apt update -y && apt install libgl1-mesa-glx -y
