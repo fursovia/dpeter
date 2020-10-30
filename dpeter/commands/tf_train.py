@@ -87,6 +87,7 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
         shuffle=True,
         verbose=1
     )
+    model.load_checkpoint(target=checkpoint_path)
 
     wandb.save(checkpoint_path)
 
