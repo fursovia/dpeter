@@ -7,7 +7,7 @@ import wandb
 import editdistance
 import numpy as np
 
-from dpeter.constants import WIDTH, HEIGHT, PROJECT_NAME
+from dpeter.constants import PROJECT_NAME, CHARSET, MAX_LENGTH, INPUT_SIZE
 from dpeter.utils.generator import DataGenerator
 from dpeter.models.htr_model import HTRModel
 from dpeter.utils.metrics import ocr_metrics
@@ -16,15 +16,11 @@ from dpeter.utils.preprocessing import rotate_maybe
 
 app = typer.Typer()
 
-
-INPUT_SIZE = (WIDTH, HEIGHT, 1)
 NUM_SAMPLES = 50
 ARCH = "flor"
 BATCH_SIZE = 16
-MAX_LENGTH = 80
 LEARNING_RATE = 0.001
 NUM_EPOCHS = 100
-CHARSET = " оаетнисрлвдкмпубiѣяычгзъжхшйюфц1ь+щ[0]27345э8erps96tfіhcn⊕m⊗daglb)–|×o/kuǂ…"
 
 
 def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], k: int = NUM_SAMPLES) -> np.ndarray:
