@@ -2,12 +2,13 @@ FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
 
 ENV LC_ALL=C.UTF-8 LANG=C.UTF-8
 
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 RUN apt-get update || true && apt-get install -y build-essential \
     wget curl git git-lfs vim zip unzip tmux htop software-properties-common \
     libglib2.0-0 libsm6 libxext6 libxrender-dev \
     zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev \
     libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev \
-    python3.7 python3-pip python3.7-venv python3.7-dev
+    python3.7 python3-pip python3.7-venv python3.7-dev libopencv-dev pkg-config
 
 RUN add-apt-repository ppa:deadsnakes/ppa -y \
     && apt install python3.7 -y \
@@ -27,5 +28,7 @@ COPY pyproject.toml poetry.lock /notebook/
 RUN pip install poetry \
     && poetry config virtualenvs.create false \
     && poetry install
+
+RUN git clone https://github.com/FilatovArtm/DeslantImg.git /home/DeslantImg && cd /home/DeslantImg && ./build.sh && cd ..
 
 RUN apt update -y && apt install libgl1-mesa-glx -y
