@@ -13,6 +13,10 @@ create_dataset --data-dir ./data
 CUDA_VISIBLE_DEVICES="2" tf_train ./data
 ```
 
+## Aling letters
+```bash
+/home/DeslantImg/DeslantImg input.jpg output.jpg
+```
 
 ## Torch
 ```bash
@@ -27,3 +31,4 @@ CUDA_VISIBLE_DEVICES="0" train configs/lc_base.jsonnet
 ```bash
 bash bin/create_submit.sh
 ```
+
