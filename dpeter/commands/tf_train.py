@@ -19,9 +19,12 @@ app = typer.Typer()
 
 NUM_SAMPLES = 50
 ARCH = "flor"
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-NUM_EPOCHS = 100
+NUM_EPOCHS = 200
+BEAM_SIZE = 10
+PATIENCE = 20
+LR_PATIENCE = 10
 
 
 def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], k: int = NUM_SAMPLES) -> np.ndarray:
@@ -56,9 +59,9 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
         architecture=ARCH,
         input_size=INPUT_SIZE,
         vocab_size=dtgen.tokenizer.vocab_size,
-        beam_width=10,
-        stop_tolerance=20,
-        reduce_tolerance=15
+        beam_width=BEAM_SIZE,
+        stop_tolerance=PATIENCE,
+        reduce_tolerance=LR_PATIENCE
     )
 
     model.compile(learning_rate=LEARNING_RATE)
