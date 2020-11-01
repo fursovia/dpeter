@@ -4,6 +4,7 @@ import datetime
 
 import typer
 import wandb
+from wandb.keras import WandbCallback
 import editdistance
 import numpy as np
 
@@ -69,7 +70,7 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
         logdir=str(serialization_dir),
         checkpoint=checkpoint_path,
         verbose=1
-    )
+    ) + [WandbCallback(save_model=False)]
 
     start_time = datetime.datetime.now()
 
