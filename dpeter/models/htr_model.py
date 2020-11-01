@@ -336,26 +336,26 @@ def bluche(input_size, d_model):
     cnn = Reshape((input_size[0] // 2, input_size[1] // 2, input_size[2] * 4))(input_data)
 
     cnn = Conv2D(
-        filters=8, kernel_size=(3, 3), strides=(1, 1), padding="same", activation="tanh", kernel_initializer="he_uniform"
+        filters=8, kernel_size=(3, 3), strides=(1, 1), padding="same", activation="tanh"
     )(cnn)
 
     cnn = Conv2D(
-        filters=16, kernel_size=(2, 4), strides=(2, 4), padding="same", activation="tanh", kernel_initializer="he_uniform"
+        filters=16, kernel_size=(2, 4), strides=(2, 4), padding="same", activation="tanh"
     )(cnn)
     cnn = GatedConv2D(filters=16, kernel_size=(3, 3), strides=(1, 1), padding="same")(cnn)
 
     cnn = Conv2D(
-        filters=32, kernel_size=(3, 3), strides=(1, 1), padding="same", activation="tanh", kernel_initializer="he_uniform"
+        filters=32, kernel_size=(3, 3), strides=(1, 1), padding="same", activation="tanh"
     )(cnn)
     cnn = GatedConv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding="same")(cnn)
 
     cnn = Conv2D(
-        filters=64, kernel_size=(2, 4), strides=(2, 4), padding="same", activation="tanh", kernel_initializer="he_uniform"
+        filters=64, kernel_size=(2, 4), strides=(2, 4), padding="same", activation="tanh"
     )(cnn)
     cnn = GatedConv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), padding="same")(cnn)
 
     cnn = Conv2D(
-        filters=128, kernel_size=(3, 3), strides=(1, 1), padding="same", activation="tanh", kernel_initializer="he_uniform"
+        filters=128, kernel_size=(3, 3), strides=(1, 1), padding="same", activation="tanh"
     )(cnn)
     cnn = MaxPooling2D(pool_size=(1, 4), strides=(1, 4), padding="valid")(cnn)
 
