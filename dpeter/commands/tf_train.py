@@ -131,6 +131,8 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
         norm_punctuation=False
     )
     metrics = {'CER': metrics[0], "WER": metrics[1], "SER": metrics[2]}
+    print(">>> METRICS:")
+    print(metrics)
     for key, val in metrics.items():
         wandb.run.summary[key] = val
 
