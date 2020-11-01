@@ -1,6 +1,6 @@
 
 
-DATA_DIR="data/images"
+DATA_DIR="data/rotated_images"
 OUT_DIR="data/deslant_images"
 
 mkdir -p ${OUT_DIR}
