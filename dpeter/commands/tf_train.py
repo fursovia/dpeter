@@ -19,12 +19,12 @@ app = typer.Typer()
 
 NUM_SAMPLES = 50
 ARCH = "flor"
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 LEARNING_RATE = 0.001
 NUM_EPOCHS = 250
 BEAM_SIZE = 50
 PATIENCE = 20
-LR_PATIENCE = 10
+LR_PATIENCE = 15
 
 
 def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], k: int = NUM_SAMPLES) -> np.ndarray:

@@ -14,7 +14,7 @@ app = typer.Typer()
 
 ARCH = "flor"
 BATCH_SIZE = 16
-BEAM_SIZE = 100
+BEAM_SIZE = 50
 
 
 @app.command()
