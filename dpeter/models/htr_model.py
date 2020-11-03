@@ -12,7 +12,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.constraints import MaxNorm
 from tensorflow.keras.layers import Conv2D, Bidirectional, LSTM, GRU, Dense
 from tensorflow.keras.layers import Dropout, BatchNormalization, LeakyReLU, PReLU
-from tensorflow.keras.layers import Input, Add, Activation, Lambda, MaxPooling2D, Reshape
+from tensorflow.keras.layers import Input, Add, Activation, Lambda, MaxPooling2D, Reshape, Permute
 
 from dpeter.modules.layers import FullGatedConv2D, GatedConv2D, OctConv2D
 
@@ -622,7 +622,7 @@ def fursov(input_size, d_model):
     cnn_output = Reshape((shape[1], shape[2] * shape[3]))(cnn)
 
     # (batch_size, feature, timesteps) -> (batch_size, timesteps, feature)
-    cnn_output = tf.transpose(cnn_output, perm=(0, 2, 1))
+    cnn_output = Permute((2, 1))(cnn_output)
 
     embeddings = tf.keras.layers.Embedding(
         input_dim=128,  # max_len
