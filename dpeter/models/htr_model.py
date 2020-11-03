@@ -581,7 +581,6 @@ def fursov(input_size, d_model):
     """
 
     input_data = Input(name="images", shape=input_size)
-    indexes = Input(name="indexes", shape=(128, ))
 
     cnn = Conv2D(filters=16, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer="he_uniform")(input_data)
     cnn = PReLU(shared_axes=[1, 2])(cnn)
@@ -625,7 +624,7 @@ def fursov(input_size, d_model):
         input_dim=128,  # max_len
         output_dim=128,  # the same as number of features in cnn
         input_length=128  # max_len
-    )(indexes)
+    )(PositionalEmbedding()(cnn))
 
     attention_vectors = tf.keras.layers.AdditiveAttention()([embeddings, cnn_output])
 
@@ -635,4 +634,21 @@ def fursov(input_size, d_model):
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(bgru)
     output_data = Dense(units=d_model, activation="softmax")(bgru)
 
-    return [input_data, indexes], output_data
+    return input_data, output_data
+
+
+def _get_positional_indexes(batch_size: int, maxlen: int = 128) -> tf.Tensor:
+    indexes = tf.range(maxlen)[tf.newaxis]
+    indexes = tf.repeat(indexes, 10, axis=0)
+    return indexes
+
+
+class PositionalEmbedding(tf.keras.layers.Layer):
+    def __init__(self, maxlen: int = 128):
+        super().__init__()
+        self._maxlen = maxlen
+
+    def call(self, x):
+        indexes = tf.range(self._maxlen)[tf.newaxis]
+        indexes = tf.repeat(indexes, tf.shape(x)[0], axis=0)
+        return indexes
