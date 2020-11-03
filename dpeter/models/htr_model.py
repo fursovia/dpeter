@@ -621,6 +621,9 @@ def fursov(input_size, d_model):
     # (batch_size, 128, 64, 2) -> (batch_size, 128, 128)
     cnn_output = Reshape((shape[1], shape[2] * shape[3]))(cnn)
 
+    # (batch_size, feature, timesteps) -> (batch_size, timesteps, feature)
+    cnn_output = tf.transpose(cnn_output, perm=(0, 2, 1))
+
     embeddings = tf.keras.layers.Embedding(
         input_dim=128,  # max_len
         output_dim=128,  # the same as number of features in cnn
@@ -629,6 +632,7 @@ def fursov(input_size, d_model):
 
     attention_vectors = tf.keras.layers.AdditiveAttention()([embeddings, cnn_output])
 
+    # input: [batch_size, timesteps, feature]
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(attention_vectors)
     bgru = Dense(units=256)(bgru)
 
