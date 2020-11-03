@@ -18,7 +18,7 @@ from dpeter.utils.preprocessing import rotate_maybe
 app = typer.Typer()
 
 NUM_SAMPLES = 50
-ARCH = "flor"
+ARCH = "fursov"
 BATCH_SIZE = 16
 LEARNING_RATE = 0.001
 NUM_EPOCHS = 250
