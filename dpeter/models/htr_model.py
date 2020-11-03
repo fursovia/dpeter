@@ -629,7 +629,7 @@ def fursov(input_size, d_model):
         output_dim=128,  # the same as number of features in cnn
         input_length=128,  # max_len
         name="text_positional_embedder",
-    )(PositionalEmbedding()(cnn))
+    )(PositionalEmbedding(MAX_LENGTH)(cnn))
 
     attention_vectors = tf.keras.layers.AdditiveAttention()([positional_embeddings, cnn_output])
     # attention_vectors = Permute((2, 1))(attention_vectors)
@@ -643,12 +643,6 @@ def fursov(input_size, d_model):
     output_data = Dense(units=d_model, activation="softmax")(bgru)
 
     return input_data, output_data
-
-
-def _get_positional_indexes(batch_size: int, maxlen: int = 128) -> tf.Tensor:
-    indexes = tf.range(maxlen)[tf.newaxis]
-    indexes = tf.repeat(indexes, 10, axis=0)
-    return indexes
 
 
 class PositionalEmbedding(tf.keras.layers.Layer):
