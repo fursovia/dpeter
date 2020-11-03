@@ -621,6 +621,15 @@ def fursov(input_size, d_model):
     # (batch_size, 128, 64, 2) -> (batch_size, 128, 128)
     cnn_output = Reshape((shape[1], shape[2] * shape[3]))(cnn)
 
+    pixel_positional_embeddings = tf.keras.layers.Embedding(
+        input_dim=128,  # max_len
+        output_dim=128,  # the same as number of features in cnn
+        input_length=128,  # max_len
+        name="pixel_positional_embedder",
+    )(PositionalEmbedding(128)(cnn))
+
+    cnn_output = Add()([cnn_output, pixel_positional_embeddings])
+
     # (batch_size, feature, timesteps) -> (batch_size, timesteps, feature)
     # cnn_output = Permute((2, 1))(cnn_output)
 
