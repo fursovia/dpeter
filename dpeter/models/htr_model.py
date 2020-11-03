@@ -15,6 +15,7 @@ from tensorflow.keras.layers import Dropout, BatchNormalization, LeakyReLU, PReL
 from tensorflow.keras.layers import Input, Add, Activation, Lambda, MaxPooling2D, Reshape, Permute
 
 from dpeter.modules.layers import FullGatedConv2D, GatedConv2D, OctConv2D
+from dpeter.constants import MAX_LENGTH
 
 """
 HTRModel Class based on:
@@ -332,7 +333,7 @@ def bluche(input_size, d_model):
         URL: https://ieeexplore.ieee.org/document/8270042
     """
 
-    input_data = Input(name="input", shape=input_size)
+    input_data = Input(name="images", shape=input_size)
     cnn = Reshape((input_size[0] // 2, input_size[1] // 2, input_size[2] * 4))(input_data)
 
     cnn = Conv2D(
@@ -386,7 +387,7 @@ def puigcerver(input_size, d_model):
         Escola Tècnica Superior d’Enginyeria Informàtica, Universitat Politècnica de València, 2018
     """
 
-    input_data = Input(name="input", shape=input_size)
+    input_data = Input(name="images", shape=input_size)
 
     cnn = Conv2D(filters=16, kernel_size=(3, 3), strides=(1, 1), padding="same")(input_data)
     cnn = BatchNormalization()(cnn)
@@ -434,7 +435,7 @@ def flor(input_size, d_model):
     Gated Convolucional Recurrent Neural Network by Flor et al.
     """
 
-    input_data = Input(name="input", shape=input_size)
+    input_data = Input(name="images", shape=input_size)
 
     cnn = Conv2D(filters=16, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer="he_uniform")(input_data)
     cnn = PReLU(shared_axes=[1, 2])(cnn)
@@ -488,7 +489,7 @@ def puigcerver_octconv(input_size, d_model):
     """
 
     alpha = 0.25
-    input_data = Input(name="input", shape=input_size)
+    input_data = Input(name="images", shape=input_size)
     high = input_data
     low = tf.keras.layers.AveragePooling2D(2)(input_data)
 
@@ -622,17 +623,16 @@ def fursov(input_size, d_model):
     cnn_output = Reshape((shape[1], shape[2] * shape[3]))(cnn)
 
     # (batch_size, feature, timesteps) -> (batch_size, timesteps, feature)
-    cnn_output = Permute((2, 1))(cnn_output)
+    # cnn_output = Permute((2, 1))(cnn_output)
 
     positional_embeddings = tf.keras.layers.Embedding(
-        input_dim=128,  # max_len
+        input_dim=MAX_LENGTH,  # max_len
         output_dim=128,  # the same as number of features in cnn
-        input_length=128,  # max_len
         name="text_positional_embedder"
     )(indexes)
 
     attention_vectors = tf.keras.layers.AdditiveAttention()([positional_embeddings, cnn_output])
-    attention_vectors = Permute((2, 1))(attention_vectors)
+    # attention_vectors = Permute((2, 1))(attention_vectors)
 
     # input: [batch_size, timesteps, feature]
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(attention_vectors)
