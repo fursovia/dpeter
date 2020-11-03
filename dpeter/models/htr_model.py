@@ -624,26 +624,27 @@ def fursov(input_size, d_model):
     # (batch_size, feature, timesteps) -> (batch_size, timesteps, feature)
     cnn_output = Permute((2, 1))(cnn_output)
 
-    pixel_positional_embeddings = tf.keras.layers.Embedding(
-        input_dim=128,  # max_len
-        output_dim=128,  # the same as number of features in cnn
-        input_length=128,  # max_len
-        name="pixel_positional_embedder"
-    )(indexes)
+    # pixel_positional_embeddings = tf.keras.layers.Embedding(
+    #     input_dim=128,  # max_len
+    #     output_dim=128,  # the same as number of features in cnn
+    #     input_length=128,  # max_len
+    #     name="pixel_positional_embedder"
+    # )(indexes)
+    #
+    # cnn_output = Add()([cnn_output, pixel_positional_embeddings])
 
-    cnn_output = Add()([cnn_output, pixel_positional_embeddings])
-
-    positional_embeddings = tf.keras.layers.Embedding(
-        input_dim=128,  # max_len
-        output_dim=128,  # the same as number of features in cnn
-        input_length=128,  # max_len
-        name="text_positional_embedder"
-    )(indexes)
-
-    attention_vectors = tf.keras.layers.AdditiveAttention()([positional_embeddings, cnn_output])
+    # positional_embeddings = tf.keras.layers.Embedding(
+    #     input_dim=128,  # max_len
+    #     output_dim=128,  # the same as number of features in cnn
+    #     input_length=128,  # max_len
+    #     name="text_positional_embedder"
+    # )(indexes)
+    #
+    # attention_vectors = tf.keras.layers.AdditiveAttention()([positional_embeddings, cnn_output])
 
     # input: [batch_size, timesteps, feature]
-    bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(attention_vectors)
+    bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(cnn_output)
+
     bgru = Dense(units=256)(bgru)
 
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(bgru)
