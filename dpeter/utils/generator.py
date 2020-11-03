@@ -101,7 +101,7 @@ class DataGenerator:
 
             indexes = _get_positional_indexes(batch_size=y_valid.shape[0], maxlen=self.tokenizer.maxlen)
 
-            yield ({"images": y_valid, "indexes": indexes}, y_valid)
+            yield ({"images": x_valid, "indexes": indexes}, y_valid)
 
     def next_test_batch(self):
         """Return model predict parameters"""
