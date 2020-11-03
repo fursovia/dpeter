@@ -631,7 +631,7 @@ def fursov(input_size, d_model):
     cnn_output = Add()([cnn_output, pixel_positional_embeddings])
 
     # (batch_size, feature, timesteps) -> (batch_size, timesteps, feature)
-    # cnn_output = Permute((2, 1))(cnn_output)
+    cnn_output = Permute((2, 1))(cnn_output)
 
     positional_embeddings = tf.keras.layers.Embedding(
         input_dim=MAX_LENGTH,  # max_len
@@ -641,7 +641,7 @@ def fursov(input_size, d_model):
     )(PositionalEmbedding(MAX_LENGTH)(cnn))
 
     attention_vectors = tf.keras.layers.AdditiveAttention()([positional_embeddings, cnn_output])
-    # attention_vectors = Permute((2, 1))(attention_vectors)
+    attention_vectors = Permute((2, 1))(attention_vectors)
 
     # input: [batch_size, timesteps, feature]
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(attention_vectors)
