@@ -580,7 +580,8 @@ def fursov(input_size, d_model):
     Gated Convolucional Recurrent Neural Network + Additive Attention
     """
 
-    input_data = Input(name="input", shape=input_size)
+    input_data = Input(name="images", shape=input_size)
+    indexes = Input(name="indexes", shape=(128, ))
 
     cnn = Conv2D(filters=16, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer="he_uniform")(input_data)
     cnn = PReLU(shared_axes=[1, 2])(cnn)
@@ -620,11 +621,6 @@ def fursov(input_size, d_model):
     # (batch_size, 128, 64, 2) -> (batch_size, 128, 128)
     cnn_output = Reshape((shape[1], shape[2] * shape[3]))(cnn)
 
-    # positional indexes
-    indexes = tf.range(0, limit=128)
-    indexes = tf.reshape(indexes, shape=(1, 128))
-    indexes = tf.repeat(indexes, tf.shape(cnn)[0], axis=0)
-
     embeddings = tf.keras.layers.Embedding(
         input_dim=128,  # max_len
         output_dim=128,  # the same as number of features in cnn
@@ -639,4 +635,4 @@ def fursov(input_size, d_model):
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(bgru)
     output_data = Dense(units=d_model, activation="softmax")(bgru)
 
-    return input_data, output_data
+    return [input_data, indexes], output_data

@@ -4,12 +4,19 @@ Image renderings and text are created on the fly each time.
 """
 
 from itertools import groupby
+from functools import lru_cache
 
 import h5py
 import numpy as np
-import unicodedata
 
 import dpeter.utils.preprocessing as pp
+
+
+@lru_cache(maxsize=None)
+def _get_positional_indexes(batch_size: int, maxlen: int = 128) -> np.ndarray:
+    indexes = np.arange(maxlen).reshape(1, -1)
+    indexes = np.repeat(indexes, batch_size, axis=0)
+    return indexes
 
 
 class DataGenerator:
@@ -68,7 +75,9 @@ class DataGenerator:
             y_train = [np.pad(y, (0, self.tokenizer.maxlen - len(y))) for y in y_train]
             y_train = np.asarray(y_train, dtype=np.int16)
 
-            yield (x_train, y_train)
+            indexes = _get_positional_indexes(batch_size=y_train.shape[0], maxlen=self.tokenizer.maxlen)
+
+            yield ({"images": x_train, "indexes": indexes}, y_train)
 
     def next_valid_batch(self):
         """Get the next batch from validation partition (yield)"""
@@ -90,7 +99,9 @@ class DataGenerator:
             y_valid = [np.pad(y, (0, self.tokenizer.maxlen - len(y))) for y in y_valid]
             y_valid = np.asarray(y_valid, dtype=np.int16)
 
-            yield (x_valid, y_valid)
+            indexes = _get_positional_indexes(batch_size=y_valid.shape[0], maxlen=self.tokenizer.maxlen)
+
+            yield ({"images": y_valid, "indexes": indexes}, y_valid)
 
     def next_test_batch(self):
         """Return model predict parameters"""
