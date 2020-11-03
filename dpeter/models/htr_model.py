@@ -573,3 +573,70 @@ def _create_octconv_last_block(inputs, ch, alpha):
     x = Activation("relu")(x)
 
     return x
+
+
+def fursov(input_size, d_model):
+    """
+    Gated Convolucional Recurrent Neural Network + Additive Attention
+    """
+
+    input_data = Input(name="input", shape=input_size)
+
+    cnn = Conv2D(filters=16, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer="he_uniform")(input_data)
+    cnn = PReLU(shared_axes=[1, 2])(cnn)
+    cnn = BatchNormalization(renorm=True)(cnn)
+    cnn = FullGatedConv2D(filters=16, kernel_size=(3, 3), padding="same")(cnn)
+
+    cnn = Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding="same", kernel_initializer="he_uniform")(cnn)
+    cnn = PReLU(shared_axes=[1, 2])(cnn)
+    cnn = BatchNormalization(renorm=True)(cnn)
+    cnn = FullGatedConv2D(filters=32, kernel_size=(3, 3), padding="same")(cnn)
+
+    cnn = Conv2D(filters=40, kernel_size=(2, 4), strides=(2, 4), padding="same", kernel_initializer="he_uniform")(cnn)
+    cnn = PReLU(shared_axes=[1, 2])(cnn)
+    cnn = BatchNormalization(renorm=True)(cnn)
+    cnn = FullGatedConv2D(filters=40, kernel_size=(3, 3), padding="same", kernel_constraint=MaxNorm(4, [0, 1, 2]))(cnn)
+    cnn = Dropout(rate=0.2)(cnn)
+
+    cnn = Conv2D(filters=48, kernel_size=(3, 3), strides=(1, 1), padding="same", kernel_initializer="he_uniform")(cnn)
+    cnn = PReLU(shared_axes=[1, 2])(cnn)
+    cnn = BatchNormalization(renorm=True)(cnn)
+    cnn = FullGatedConv2D(filters=48, kernel_size=(3, 3), padding="same", kernel_constraint=MaxNorm(4, [0, 1, 2]))(cnn)
+    cnn = Dropout(rate=0.2)(cnn)
+
+    cnn = Conv2D(filters=56, kernel_size=(2, 4), strides=(2, 4), padding="same", kernel_initializer="he_uniform")(cnn)
+    cnn = PReLU(shared_axes=[1, 2])(cnn)
+    cnn = BatchNormalization(renorm=True)(cnn)
+    cnn = FullGatedConv2D(filters=56, kernel_size=(3, 3), padding="same", kernel_constraint=MaxNorm(4, [0, 1, 2]))(cnn)
+    cnn = Dropout(rate=0.2)(cnn)
+
+    cnn = Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), padding="same", kernel_initializer="he_uniform")(cnn)
+    cnn = PReLU(shared_axes=[1, 2])(cnn)
+    cnn = BatchNormalization(renorm=True)(cnn)
+
+    cnn = MaxPooling2D(pool_size=(1, 2), strides=(1, 2), padding="valid")(cnn)
+
+    shape = cnn.get_shape()
+    # (batch_size, 128, 64, 2) -> (batch_size, 128, 128)
+    cnn_output = Reshape((shape[1], shape[2] * shape[3]))(cnn)
+
+    # positional indexes
+    indexes = tf.range(0, limit=128)
+    indexes = tf.reshape(indexes, shape=(1, 128))
+    indexes = tf.repeat(indexes, tf.shape(cnn)[0], axis=0)
+
+    embeddings = tf.keras.layers.Embedding(
+        input_dim=128,  # max_len
+        output_dim=128,  # the same as number of features in cnn
+        input_length=128  # max_len
+    )(indexes)
+
+    attention_vectors = tf.keras.layers.AdditiveAttention()([embeddings, cnn_output])
+
+    bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(attention_vectors)
+    bgru = Dense(units=256)(bgru)
+
+    bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(bgru)
+    output_data = Dense(units=d_model, activation="softmax")(bgru)
+
+    return input_data, output_data
