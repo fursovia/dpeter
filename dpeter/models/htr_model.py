@@ -624,7 +624,6 @@ def fursov(input_size, d_model):
     pixel_positional_embeddings = tf.keras.layers.Embedding(
         input_dim=128,  # max_len
         output_dim=128,  # the same as number of features in cnn
-        input_length=128,  # max_len
         name="pixel_positional_embedder",
     )(PositionalEmbedding(128)(cnn))
 
@@ -635,7 +634,6 @@ def fursov(input_size, d_model):
     positional_embeddings = tf.keras.layers.Embedding(
         input_dim=MAX_LENGTH,  # max_len
         output_dim=128,  # the same as number of features in cnn
-        input_length=128,  # max_len
         name="text_positional_embedder",
     )(PositionalEmbedding(MAX_LENGTH)(cnn))
 
