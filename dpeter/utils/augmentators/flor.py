@@ -10,11 +10,11 @@ class Flor(Augmentator):
 
     def __init__(
             self,
-            dilate_range: float,
-            erode_range: float,
-            height_shift_range: float,
-            scale_range: float,
-            width_shift_range: float,
+            dilate_range: float = 3,
+            erode_range: float = 5,
+            height_shift_range: float = 0.025,
+            scale_range: float = 0.05,
+            width_shift_range: float = 0.05,
             rotation_range: float = 1.5
     ):
         self.dilate_range = dilate_range

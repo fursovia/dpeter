@@ -40,6 +40,8 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
         date = datetime.datetime.utcnow().strftime('%H%M%S-%d%m')
         serialization_dir = Path(f'./logs/{date}')
 
+    serialization_dir.mkdir(exist_ok=True, parents=True)
+
     params = Params.from_file(str(config_path))
     params["data_dir"] = str(data_dir)
     params["serialization_dir"] = str(serialization_dir)
