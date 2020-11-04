@@ -7,8 +7,8 @@ local target_namespace = "target_tokens";
         "source_tokenizer": "character",
         "target_tokenizer": "character",
     },
-    "train_data_path": "data/seq2seq/train.txt",
-    "validation_data_path": "data/seq2seq/valid.txt",
+    "train_data_path": "data/seq2seq/train.tsv",
+    "validation_data_path": "data/seq2seq/valid.tsv",
     "model": {
         "type": "copynet_seq2seq",
         "source_embedder": {
