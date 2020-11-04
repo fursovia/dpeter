@@ -34,7 +34,7 @@ local target_namespace = "target_tokens";
             "matrix_dim": 256,
         },
         "target_embedding_dim": 128,
-        "beam_size": 10,
+        "beam_size": 3,
         "max_decoding_steps": 80,
     },
     "data_loader": {
