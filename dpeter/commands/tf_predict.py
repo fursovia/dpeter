@@ -25,7 +25,7 @@ def main(
 ):
 
     if data_dir is None:
-        data_dir = Path("./data")
+        data_dir = Path("./data/images")
 
     if out_path is None:
         out_path = Path("./output")
