@@ -4,8 +4,8 @@ import cv2
 from dpeter.utils.preprocessors.preprocessor import Preprocessor
 
 
-@Preprocessor.register("basic_resizer")
-class Resizer(Preprocessor):
+@Preprocessor.register("basic_rotator")
+class Rotator(Preprocessor):
 
     def __init__(self, threshold: float = 2.0) -> None:
         self._threshold = threshold

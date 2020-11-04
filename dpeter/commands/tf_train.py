@@ -15,6 +15,7 @@ from dpeter.models.htr_model import HTRModel
 from dpeter.utils.metrics import ocr_metrics
 from dpeter.utils.data import load_jsonlines, load_images, load_texts
 from dpeter.utils.preprocessing import rotate_maybe
+from dpeter.utils.augmentators.augmentator import Augmentator
 
 app = typer.Typer()
 
@@ -53,6 +54,7 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
         batch_size=params["training"]["batch_size"],
         charset=CHARSET,
         max_text_length=MAX_LENGTH,
+        augmentator=Augmentator.from_params(params["dataset_reader"]["augmentator"]),
         predict=False
     )
 

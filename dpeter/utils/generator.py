@@ -9,15 +9,17 @@ import h5py
 import numpy as np
 
 import dpeter.utils.preprocessing as pp
+from dpeter.utils.augmentators.augmentator import Augmentator
 
 
 class DataGenerator:
     """Generator class with data streaming"""
 
-    def __init__(self, source, batch_size, charset, max_text_length, predict=False):
+    def __init__(self, source, batch_size, charset, max_text_length, augmentator: Augmentator, predict=False):
         self.tokenizer = Tokenizer(charset, max_text_length)
         self.batch_size = batch_size
         self.partitions = ['test'] if predict else ['train', 'valid']
+        self.augmentator = augmentator
 
         self.size = dict()
         self.steps = dict()
@@ -54,13 +56,7 @@ class DataGenerator:
             self.index['train'] = until
 
             x_train = self.dataset['train']['dt'][index:until]
-            x_train = pp.augmentation(x_train,
-                                      rotation_range=1.5,
-                                      scale_range=0.05,
-                                      height_shift_range=0.025,
-                                      width_shift_range=0.05,
-                                      erode_range=5,
-                                      dilate_range=3)
+            x_train = self.augmentator.augment(x_train)
             x_train = pp.normalization(x_train)
 
             y_train = [self.tokenizer.encode(y) for y in self.dataset['train']['gt'][index:until]]
