@@ -16,7 +16,7 @@ local target_namespace = "target_tokens";
             "tokens": {
               "type": "embedding",
               "embedding_dim": 128,
-              "vocab_namespace": "target_namespace"
+              "vocab_namespace": target_namespace
             }
           }
         },
