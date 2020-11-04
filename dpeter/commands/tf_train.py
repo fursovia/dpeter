@@ -7,6 +7,7 @@ import wandb
 from wandb.keras import WandbCallback
 import editdistance
 import numpy as np
+from allennlp.common import Params
 
 from dpeter.constants import PROJECT_NAME, CHARSET, MAX_LENGTH, INPUT_SIZE
 from dpeter.utils.generator import DataGenerator
@@ -18,13 +19,6 @@ from dpeter.utils.preprocessing import rotate_maybe
 app = typer.Typer()
 
 NUM_SAMPLES = 50
-ARCH = "fursov"
-BATCH_SIZE = 16
-LEARNING_RATE = 0.001
-NUM_EPOCHS = 250
-BEAM_SIZE = 50
-PATIENCE = 20
-LR_PATIENCE = 15
 
 
 def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], k: int = NUM_SAMPLES) -> np.ndarray:
@@ -38,34 +32,42 @@ def find_indexes_of_the_worst_predicitons(y_pred: List[str], y_true: List[str], 
 
 
 @app.command()
-def main(data_dir: Path, serialization_dir: Optional[Path] = None):
+def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = None):
     wandb.init(project=PROJECT_NAME)
 
     if serialization_dir is None:
         date = datetime.datetime.utcnow().strftime('%H%M%S-%d%m')
         serialization_dir = Path(f'./logs/{date}')
 
+    params = Params.from_file(str(config_path))
+    params["data_dir"] = str(data_dir)
+    params["serialization_dir"] = str(serialization_dir)
+
+    flat_params = params.as_flat_dict()
+    wandb.config.update(flat_params)
+
     source_path = data_dir / "data.hdf5"
 
     dtgen = DataGenerator(
         source=str(source_path),
-        batch_size=BATCH_SIZE,
+        batch_size=params["training"]["batch_size"],
         charset=CHARSET,
         max_text_length=MAX_LENGTH,
         predict=False
     )
 
     model = HTRModel(
-        architecture=ARCH,
+        architecture=params["model"]["type"],
         input_size=INPUT_SIZE,
         vocab_size=dtgen.tokenizer.vocab_size,
-        beam_width=BEAM_SIZE,
-        stop_tolerance=PATIENCE,
-        reduce_tolerance=LR_PATIENCE
+        beam_width=params["model"]["beam_size"],
+        stop_tolerance=params["training"]["patience"],
+        reduce_tolerance=params["training"]["lr_patience"]
     )
 
-    model.compile(learning_rate=LEARNING_RATE)
+    model.compile(learning_rate=params["training"]["learning_rate"])
     checkpoint_path = str(serialization_dir / "checkpoint_weights.hdf5")
+    # can be used as a pretrained model (save for later)
     # model.load_checkpoint(target=checkpoint_path)
 
     model.summary(str(serialization_dir), "summary.txt")
@@ -79,7 +81,7 @@ def main(data_dir: Path, serialization_dir: Optional[Path] = None):
 
     h = model.fit(
         x=dtgen.next_train_batch(),
-        epochs=NUM_EPOCHS,
+        epochs=params["training"]["num_epochs"],
         steps_per_epoch=dtgen.steps['train'],
         validation_data=dtgen.next_valid_batch(),
         validation_steps=dtgen.steps['valid'],
