@@ -42,7 +42,12 @@ local target_namespace = "target_tokens";
         "batch_size": 512,
         "num_workers": 0,
         "batches_per_epoch": 700,
-        // https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
+        "pin_memory": true
+    },
+    "validation_data_loader": {
+        "shuffle": false,
+        "batch_size": 256,
+        "num_workers": 0,
         "pin_memory": true
     },
     "trainer": {
