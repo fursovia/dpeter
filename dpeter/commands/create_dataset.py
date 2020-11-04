@@ -2,21 +2,21 @@ from pathlib import Path
 
 import typer
 import h5py
+from allennlp.common import Params
 
 from dpeter.utils.dataset import Dataset
-from dpeter.constants import WIDTH, HEIGHT
+from dpeter.utils.preprocessors.preprocessor import Preprocessor
 
-INPUT_SIZE = (WIDTH, HEIGHT, 1)
 app = typer.Typer()
 
 
 @app.command()
-def main(data_dir: str = "./data"):
-    ds = Dataset(data_dir=data_dir)
-    ds.read_partitions()
+def main(config_path: Path, data_dir: str = "./data"):
+    params = Params.from_file(str(config_path))
+    preprocessor = Preprocessor.from_params(params["dataset_reader"]["preprocessor"])
 
-    print("Partitions will be preprocessed...")
-    ds.preprocess_partitions(input_size=INPUT_SIZE)
+    ds = Dataset(data_dir=data_dir, preprocessor=preprocessor)
+    ds.read()
 
     print("Partitions will be saved...")
     for partition in ds.partitions:
