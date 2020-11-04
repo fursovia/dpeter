@@ -1,43 +1,7 @@
-"""
-Data preproc functions:
-    adjust_to_see: adjust image to better visualize (rotate and transpose)
-    augmentation: apply variations to a list of images
-    normalization: apply normalization and variations on images (if required)
-    preprocess: main function for preprocess.
-        Make the image:
-            illumination_compensation: apply illumination regularitation
-            remove_cursive_style: remove cursive style from image (if necessary)
-            sauvola: apply sauvola binarization
-    text_standardize: preprocess and standardize sentence
-"""
-
-import os
 import cv2
 import numpy as np
 
 from dpeter.constants import WHITE_CONSTANT
-
-
-def adjust_to_see(img):
-    """Rotate and transpose to image visualize (cv2 method or jupyter notebook)"""
-
-    (h, w) = img.shape[:2]
-    (cX, cY) = (w // 2, h // 2)
-
-    M = cv2.getRotationMatrix2D((cX, cY), -90, 1.0)
-    cos = np.abs(M[0, 0])
-    sin = np.abs(M[0, 1])
-
-    nW = int((h * sin) + (w * cos))
-    nH = int((h * cos) + (w * sin))
-
-    M[0, 2] += (nW / 2) - cX
-    M[1, 2] += (nH / 2) - cY
-
-    img = cv2.warpAffine(img, M, (nW + 1, nH + 1))
-    img = cv2.warpAffine(img.transpose(), M, (nW, nH))
-
-    return img
 
 
 def augmentation(imgs,
@@ -82,13 +46,6 @@ def normalization(imgs):
     return imgs
 
 
-"""
-Preprocess metodology based in:
-    H. Scheidl, S. Fiel and R. Sablatnig,
-    Word Beam Search: A Connectionist Temporal Classification Decoding Algorithm, in
-    16th International Conference on Frontiers in Handwriting Recognition, pp. 256-258, 2018.
-"""
-
 
 def rotate_maybe(img: np.ndarray) -> np.ndarray:
     w, h = img.shape
@@ -116,12 +73,3 @@ def preprocess(path, input_size):
     img = cv2.transpose(target)
 
     return img
-
-
-def text_standardize(text):
-    """Organize/add spaces around punctuation marks"""
-
-    if text is None:
-        return ""
-
-    return text.strip()

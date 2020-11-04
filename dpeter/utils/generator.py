@@ -4,7 +4,6 @@ Image renderings and text are created on the fly each time.
 """
 
 from itertools import groupby
-from functools import lru_cache
 
 import h5py
 import numpy as np
@@ -128,7 +127,6 @@ class Tokenizer:
     def encode(self, text):
         """Encode text to vector"""
 
-        # text = unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("ASCII")
         text = " ".join(text.split())
 
         groups = ["".join(group) for _, group in groupby(text)]
