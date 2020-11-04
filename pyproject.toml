@@ -22,7 +22,6 @@ dataclasses_json = "^0.5.2"
 tabulate = "^0.8.7"
 pre-commit = "^2.7.1"
 opencv-python = "^4.4.0"
-wandb = "^0.10.7"
 torchvision = "^0.7.0"
 editdistance = "^0.5.3"
 ipdb = "^0.13.4"
@@ -34,6 +33,7 @@ pytest = "5.3.1"
 black = "^19.10b0"
 mypy = "0.770"
 flake8 = "^3.7.9"
+wandb = "^0.10.7"
 
 [tool.black]
 line-length = 119
