@@ -20,6 +20,7 @@ def main(
         serialization_dir: Path,
         batch_size: int = 16,
         beam_size: int = 50,
+        top_paths: int = 1,
         data_dir: Optional[Path] = None,
         out_path: Optional[Path] = None,
 ):
@@ -39,7 +40,7 @@ def main(
         input_size=INPUT_SIZE,
         vocab_size=len(CHARSET) + 2,
         beam_width=beam_size,
-        top_paths=1
+        top_paths=top_paths
     )
 
     model.compile()
@@ -60,14 +61,19 @@ def main(
         batch_size=batch_size,
         ctc_decode=True,
         verbose=1,
-        steps=int(np.ceil(len(images) / batch_size))
+        steps=int(np.ceil(len(images) / batch_size)),
+        use_multiprocessing=True,
+        workers=5,
     )
-    predicts = [tokenizer.decode(x[0]) for x in predicts]
+    predicts = [[tokenizer.decode(y) for y in x] for x in predicts]
 
     out_path.mkdir(exist_ok=True, parents=True)
     for name, predict in zip(names, predicts):
         with open(out_path / f"{name}.txt", "w") as f:
-            f.write(predict)
+            for i, pred in enumerate(predict):
+                if i != 0:
+                    f.write('\n')
+                f.write(pred)
 
 
 if __name__ == "__main__":
