@@ -10,3 +10,6 @@
 #     # WnBCallback,
 #     GoogleAugmentator
 # )
+
+from dpeter.utils.preprocessors import *
+from dpeter.utils.augmentators import *

@@ -7,7 +7,9 @@ from allennlp.common import Params
 
 from dpeter.constants import CHARSET, MAX_LENGTH, INPUT_SIZE
 from dpeter.utils.generator import Tokenizer
-from dpeter.utils.preprocessing import preprocess, normalization
+from dpeter.utils.preprocessing import normalization
+from dpeter.utils.preprocessors.preprocessor import Preprocessor
+from dpeter.utils.data import load_image
 from dpeter.models.htr_model import HTRModel
 
 app = typer.Typer()
@@ -43,10 +45,12 @@ def main(
     model.compile()
     model.load_checkpoint(target=str(serialization_dir / "checkpoint_weights.hdf5"))
 
+    preprocessor = Preprocessor.from_params(params["dataset_reader"]["preprocessor"])
     images = []
     names = []
     for image_path in Path(data_dir).glob("*.jpg"):
-        img = preprocess(str(image_path), INPUT_SIZE)
+        img = load_image(str(image_path))
+        img = preprocessor.preprocess(img)
         images.append(img)
         names.append(image_path.stem)
 

@@ -6,7 +6,7 @@ from tqdm import tqdm
 import cv2
 
 from dpeter.utils.preprocessors.preprocessor import Preprocessor
-from dpeter.utils.data import load_jsonlines, load_text
+from dpeter.utils.data import load_jsonlines, load_text, load_image
 
 
 class Dataset:
@@ -48,7 +48,7 @@ class Dataset:
             results = []
             print(f"Partition: {partition}")
             for path in tqdm(self.dataset[partition]['dt']):
-                img = cv2.imread(str(path), cv2.IMREAD_GRAYSCALE)
+                img = load_image(str(path))
                 img = self.preprocessor.preprocess(img)
                 results.append(img)
 
