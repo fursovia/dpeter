@@ -41,6 +41,7 @@ local target_namespace = "target_tokens";
         "shuffle": true,
         "batch_size": 512,
         "num_workers": 0,
+        "batches_per_epoch": 700,
         // https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
         "pin_memory": true
     },
