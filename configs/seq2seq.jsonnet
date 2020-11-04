@@ -38,10 +38,11 @@ local target_namespace = "target_tokens";
         "max_decoding_steps": 80,
     },
     "data_loader": {
-        "batch_sampler": {
-            "type": "bucket",
-            "batch_size": 128,
-        }
+        "shuffle": true,
+        "batch_size": 512,
+        "num_workers": 0,
+        // https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
+        "pin_memory": true
     },
     "trainer": {
         "num_epochs": 300,
