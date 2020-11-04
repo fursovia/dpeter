@@ -43,6 +43,9 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
     params = Params.from_file(str(config_path))
     params["data_dir"] = str(data_dir)
     params["serialization_dir"] = str(serialization_dir)
+    save_config_to = str(serialization_dir / "config.json")
+    params.to_file(save_config_to)
+    wandb.save(save_config_to)
 
     flat_params = params.as_flat_dict()
     wandb.config.update(flat_params)

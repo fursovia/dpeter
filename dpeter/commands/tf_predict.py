@@ -3,6 +3,7 @@ from pathlib import Path
 
 import typer
 import numpy as np
+from allennlp.common import Params
 
 from dpeter.constants import CHARSET, MAX_LENGTH, INPUT_SIZE
 from dpeter.utils.generator import Tokenizer
@@ -12,13 +13,14 @@ from dpeter.models.htr_model import HTRModel
 app = typer.Typer()
 
 
-ARCH = "flor"
-BATCH_SIZE = 16
-BEAM_SIZE = 50
-
-
 @app.command()
-def main(serialization_dir: Path, data_dir: Optional[Path] = None, out_path: Optional[Path] = None,):
+def main(
+        serialization_dir: Path,
+        batch_size: int = 16,
+        beam_size: int = 50,
+        data_dir: Optional[Path] = None,
+        out_path: Optional[Path] = None,
+):
 
     if data_dir is None:
         data_dir = Path("./data")
@@ -28,11 +30,13 @@ def main(serialization_dir: Path, data_dir: Optional[Path] = None, out_path: Opt
 
     tokenizer = Tokenizer(chars=CHARSET, max_text_length=MAX_LENGTH)
 
+    config_path = str(serialization_dir / "config.json")
+    params = Params.from_file(str(config_path))
     model = HTRModel(
-        architecture=ARCH,
+        architecture=params["model"]["type"],
         input_size=INPUT_SIZE,
         vocab_size=len(CHARSET) + 2,
-        beam_width=BEAM_SIZE,
+        beam_width=beam_size,
         top_paths=1
     )
 
@@ -49,10 +53,10 @@ def main(serialization_dir: Path, data_dir: Optional[Path] = None, out_path: Opt
     images = normalization(images)
     predicts, probabilities = model.predict(
         images,
-        batch_size=BATCH_SIZE,
+        batch_size=batch_size,
         ctc_decode=True,
         verbose=1,
-        steps=int(np.ceil(len(images) / BATCH_SIZE))
+        steps=int(np.ceil(len(images) / batch_size))
     )
     predicts = [tokenizer.decode(x[0]) for x in predicts]
 
