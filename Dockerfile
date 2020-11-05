@@ -8,7 +8,7 @@ RUN apt-get update || true && apt-get install -y build-essential \
     libglib2.0-0 libsm6 libxext6 libxrender-dev \
     zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev \
     libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev \
-    python3.7 python3-pip python3.7-venv python3.7-dev libopencv-dev pkg-config
+    python3.7 python3-pip python3.7-venv python3.7-dev
 
 RUN add-apt-repository ppa:deadsnakes/ppa -y \
     && apt install python3.7 -y \
