@@ -85,8 +85,6 @@ class Seq2SeqDatasetReader(DatasetReader):
         self._source_add_end_token = source_add_end_token
         self._target_add_start_token = target_add_start_token
         self._target_add_end_token = target_add_end_token
-        self._start_token: Optional[Token] = None
-        self._end_token: Optional[Token] = None
 
         self._delimiter = delimiter
         self._source_max_tokens = source_max_tokens
