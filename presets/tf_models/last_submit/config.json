@@ -22,5 +22,15 @@
         "lr_patience": 15,
         "num_epochs": 300,
         "patience": 20
+    },
+    "postprocessor": {
+        "type": "compose",
+        "postprocessors": [
+            {
+                "type": "seq2seq",
+                "archive_path": "presets/seq2seq.tar.gz",
+                "beam_size": 10
+            },
+        ]
     }
 }
