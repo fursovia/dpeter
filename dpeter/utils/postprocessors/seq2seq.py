@@ -2,9 +2,10 @@ import json
 from pathlib import Path
 import os
 import shutil
+from typing import List
 
 from allennlp_models.generation.predictors import Seq2SeqPredictor
-from allennlp.models.archival import _load_dataset_readers, _load_model, get_weights_path, Archive, load_archive, extracted_archive
+from allennlp.models.archival import _load_dataset_readers, _load_model, get_weights_path, Archive, extracted_archive
 from allennlp.common import Params
 from allennlp.common.file_utils import cached_path
 
@@ -15,7 +16,7 @@ from dpeter.utils.postprocessors.postprocessor import Postprocessor
 class Seq2seqPostprocessor(Postprocessor):
 
     # TODO: add batches
-    def __init__(self, archive_path: str, beam_size: int = 10, cuda_device: int = 0) -> None:
+    def __init__(self, archive_path: str, beam_size: int = 10, cuda_device: int = -1, batch_size: int = 32) -> None:
 
         resolved_archive_path = cached_path(archive_path, cache_dir="presets")
 
@@ -51,8 +52,16 @@ class Seq2seqPostprocessor(Postprocessor):
         )
 
         self._predictor = Seq2SeqPredictor.from_archive(archive)
+        self._batch_size = batch_size
 
-    def postprocess(self, text: str) -> str:
-        predictions = self._predictor.predict(text)
-        pred_text = ''.join(predictions['predicted_tokens'][0])
-        return pred_text
+    def postprocess(self, texts: List[str]) -> List[str]:
+
+        pred_texts = []
+        indices = range(0, len(texts), self._batch_size)
+        for index in indices:
+            batch = texts[index: index + self._batch_size]
+            batch = [{"source": text} for text in batch]
+            predictions = self._predictor.predict_batch_json(batch)
+            pred_text = [''.join(pred['predicted_tokens'][0]) for pred in predictions]
+            pred_texts.extend(pred_text)
+        return pred_texts

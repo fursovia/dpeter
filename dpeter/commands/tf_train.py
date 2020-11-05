@@ -139,7 +139,7 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
     predicts = [dtgen.tokenizer.decode(x[0]) for x in predicts]
 
     postprocessor = Postprocessor.from_params(params["postprocessor"])
-    predicts = [postprocessor.postprocess(text) for text in predicts]
+    predicts = postprocessor.postprocess(predicts)
 
     metrics = ocr_metrics(
         predicts=predicts,

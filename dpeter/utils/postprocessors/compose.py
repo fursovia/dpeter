@@ -9,8 +9,8 @@ class ComposePostprocessor(Postprocessor):
     def __init__(self, postprocessors: List[Postprocessor]) -> None:
         self._postprocessors = postprocessors
 
-    def postprocess(self, text: str) -> str:
+    def postprocess(self, texts: List[str]) -> List[str]:
 
         for postprocessor in self._postprocessors:
-            text = postprocessor.postprocess(text)
-        return text
+            texts = postprocessor.postprocess(texts)
+        return texts

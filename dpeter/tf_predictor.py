@@ -34,9 +34,10 @@ class TfPredictor:
         predicts = [[self._tokenizer.decode(y) for y in x] for x in predicts]
 
         if self._postprocessor is not None:
+            print("postprocessing using seq2seq ...")
             postprocessed_predicts = []
             for preds in predicts:
-                preds = [self._postprocessor.postprocess(p) for p in preds]
+                preds = self._postprocessor.postprocess(preds)
                 postprocessed_predicts.append(preds)
             return postprocessed_predicts
 

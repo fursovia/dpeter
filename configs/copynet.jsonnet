@@ -2,14 +2,15 @@ local target_namespace = "target_tokens";
 
 {
     "dataset_reader": {
-        "type": "seq2seq",
+        "type": "copynet_seq2seq",
+        "target_namespace": target_namespace,
         "source_tokenizer": "character",
         "target_tokenizer": "character",
     },
     "train_data_path": "data/seq2seq/train.tsv",
     "validation_data_path": "data/seq2seq/valid.tsv",
     "model": {
-        "type": "simple_seq2seq",
+        "type": "copynet_seq2seq",
         "source_embedder": {
           "token_embedders": {
             "tokens": {
