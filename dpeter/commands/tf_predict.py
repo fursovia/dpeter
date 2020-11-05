@@ -1,5 +1,6 @@
 from typing import Optional
 from pathlib import Path
+import json
 
 import typer
 from allennlp.common import Params
@@ -35,7 +36,9 @@ def main(
     tokenizer = Tokenizer(chars=CHARSET, max_text_length=MAX_LENGTH)
 
     config_path = str(serialization_dir / "config.json")
-    params = Params.from_file(str(config_path))
+    params = json.load(open(str(config_path)))
+
+    params = Params(params=params)
     model = HTRModel(
         architecture=params["model"]["type"],
         input_size=INPUT_SIZE,
