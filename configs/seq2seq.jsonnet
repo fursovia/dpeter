@@ -2,7 +2,7 @@ local target_namespace = "target_tokens";
 
 {
     "dataset_reader": {
-        "type": "seq2seq",
+        "type": "fixed_seq2seq",
         "source_tokenizer": "character",
         "target_tokenizer": "character",
         "start_symbol": "¶",

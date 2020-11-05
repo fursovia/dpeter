@@ -14,3 +14,4 @@
 from dpeter.utils.preprocessors import *
 from dpeter.utils.augmentators import *
 from dpeter.utils.postprocessors import *
+from dpeter.modules.fixed_seq2seq_reader import Seq2SeqDatasetReader
