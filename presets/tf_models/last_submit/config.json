@@ -20,7 +20,7 @@
         "postprocessors": [
             {
                 "archive_path": "presets/seq2seq.tar.gz",
-                "beam_size": 10,
+                "beam_size": 1,
                 "type": "seq2seq"
             }
         ]
