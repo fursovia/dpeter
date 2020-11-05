@@ -37,6 +37,7 @@ class TfPredictor:
             print("postprocessing using seq2seq ...")
             predicts = [p[0] for p in predicts]
             preds = self._postprocessor.postprocess(predicts)
+            preds = [[p] for p in preds]
             return preds
 
             # postprocessed_predicts = []

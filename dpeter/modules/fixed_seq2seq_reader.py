@@ -79,7 +79,7 @@ class Seq2SeqDatasetReader(DatasetReader):
         self._source_token_indexers = source_token_indexers or {"tokens": SingleIdTokenIndexer()}
         self._target_token_indexers = target_token_indexers or self._source_token_indexers
 
-        self._start_token, self._end_token = start_symbol, end_symbol
+        self._start_token, self._end_token = Token(start_symbol), Token(end_symbol)
 
         self._source_add_start_token = source_add_start_token
         self._source_add_end_token = source_add_end_token
