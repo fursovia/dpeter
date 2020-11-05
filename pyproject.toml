@@ -12,8 +12,6 @@ create_dataset = 'dpeter.commands.create_dataset:app'
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
-allennlp = "==1.1.0"
-allennlp_models = "==1.1.0"
 python-Levenshtein = "^0.12.0"
 jsonlines = "^1.2"
 typer = "^0.3.2"
@@ -27,6 +25,8 @@ editdistance = "^0.5.3"
 ipdb = "^0.13.4"
 tensorflow = "2.3.1"
 tqdm = "^4.51.0"
+allennlp = "1.2.0"
+allennlp_models = "1.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "5.3.1"

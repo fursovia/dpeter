@@ -21,20 +21,14 @@
         "patience": 20,
         "lr_patience": 15
     },
-//    "postprocessor": {
-//        "type": "compose",
-//        "modules": [
-//            {
-//                "type": "lm",
-//                "path": "presets/lm",
-//            },
-//            {
-//                "type": "seq2seq",
-//                "path": "presets/seq2seq"
-//            },
-//            {
-//                "type": "regex"
-//            }
-//        ]
-//    }
+    "postprocessor": {
+        "type": "compose",
+        "postprocessors": [
+            {
+                "type": "seq2seq",
+                "archive_path": "presets/seq2seq.tar.gz",
+                "beam_size": 10
+            },
+        ]
+    }
 }
