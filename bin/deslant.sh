@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 
 DATA_DIR="data/rotated_images"
