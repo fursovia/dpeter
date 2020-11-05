@@ -16,7 +16,7 @@ local target_namespace = "target_tokens";
             "tokens": {
               "type": "embedding",
               "embedding_dim": 128,
-              "vocab_namespace": target_namespace
+              "vocab_namespace": "tokens"
             }
           }
         },
@@ -52,7 +52,7 @@ local target_namespace = "target_tokens";
     },
     "trainer": {
         "num_epochs": 300,
-        "patience": 10,
+        "patience": 2,
         "cuda_device": 0,
         "optimizer": {
           "type": "adam",
