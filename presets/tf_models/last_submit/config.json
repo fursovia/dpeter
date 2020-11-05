@@ -15,6 +15,16 @@
         "beam_size": 50
     },
     "data_dir": "data",
+    "postprocessor": {
+        "type": "compose",
+        "postprocessors": [
+            {
+                "archive_path": "presets/seq2seq.tar.gz",
+                "beam_size": 10,
+                "type": "seq2seq"
+            }
+        ]
+    },
     "serialization_dir": "logs/133048-0411",
     "training": {
         "batch_size": 8,
@@ -22,15 +32,5 @@
         "lr_patience": 15,
         "num_epochs": 300,
         "patience": 20
-    },
-    "postprocessor": {
-        "type": "compose",
-        "postprocessors": [
-            {
-                "type": "seq2seq",
-                "archive_path": "presets/seq2seq.tar.gz",
-                "beam_size": 10
-            },
-        ]
     }
 }
