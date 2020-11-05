@@ -35,10 +35,14 @@ class TfPredictor:
 
         if self._postprocessor is not None:
             print("postprocessing using seq2seq ...")
-            postprocessed_predicts = []
-            for preds in predicts:
-                preds = self._postprocessor.postprocess(preds)
-                postprocessed_predicts.append(preds)
-            return postprocessed_predicts
+            predicts = [p[0] for p in predicts]
+            preds = self._postprocessor.postprocess(predicts)
+            return preds
+
+            # postprocessed_predicts = []
+            # for preds in predicts:
+            #     preds = self._postprocessor.postprocess(preds)
+            #     postprocessed_predicts.append(preds)
+            # return postprocessed_predicts
 
         return predicts
