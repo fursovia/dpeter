@@ -2,7 +2,6 @@ from typing import Optional
 from pathlib import Path
 
 import typer
-import numpy as np
 from allennlp.common import Params
 
 from dpeter.constants import CHARSET, MAX_LENGTH, INPUT_SIZE
@@ -11,6 +10,8 @@ from dpeter.utils.preprocessing import normalization
 from dpeter.utils.preprocessors.preprocessor import Preprocessor
 from dpeter.utils.data import load_image
 from dpeter.models.htr_model import HTRModel
+from dpeter.tf_predictor import TfPredictor
+from dpeter.utils.postprocessors.postprocessor import Postprocessor
 
 app = typer.Typer()
 
@@ -54,18 +55,11 @@ def main(
         img = preprocessor.preprocess(img)
         images.append(img)
         names.append(image_path.stem)
-
     images = normalization(images)
-    predicts, probabilities = model.predict(
-        images,
-        batch_size=batch_size,
-        ctc_decode=True,
-        verbose=1,
-        steps=int(np.ceil(len(images) / batch_size)),
-        use_multiprocessing=True,
-        workers=5,
-    )
-    predicts = [[tokenizer.decode(y) for y in x] for x in predicts]
+
+    postprocessor = Postprocessor.from_params(params["postprocessor"])
+    predictor = TfPredictor(model=model, tokenizer=tokenizer, postprocessor=postprocessor, batch_size=batch_size)
+    predicts = predictor.predict(images)
 
     out_path.mkdir(exist_ok=True, parents=True)
     for name, predict in zip(names, predicts):

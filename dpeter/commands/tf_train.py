@@ -16,6 +16,7 @@ from dpeter.utils.metrics import ocr_metrics
 from dpeter.utils.data import load_jsonlines, load_images, load_texts
 from dpeter.utils.preprocessing import rotate_maybe
 from dpeter.utils.augmentators.augmentator import Augmentator
+from dpeter.utils.postprocessors.postprocessor import Postprocessor
 
 app = typer.Typer()
 
@@ -136,6 +137,10 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
         verbose=1
     )
     predicts = [dtgen.tokenizer.decode(x[0]) for x in predicts]
+
+    postprocessor = Postprocessor.from_params(params["postprocessor"])
+    predicts = [postprocessor.postprocess(text) for text in predicts]
+
     metrics = ocr_metrics(
         predicts=predicts,
         ground_truth=dtgen.dataset['valid']['gt'],
