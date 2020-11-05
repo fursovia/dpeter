@@ -5,6 +5,8 @@ local target_namespace = "target_tokens";
         "type": "seq2seq",
         "source_tokenizer": "character",
         "target_tokenizer": "character",
+        "start_symbol": "¶",
+        "end_symbol": "¤"
     },
     "train_data_path": "data/seq2seq/train.tsv",
     "validation_data_path": "data/seq2seq/valid.tsv",
