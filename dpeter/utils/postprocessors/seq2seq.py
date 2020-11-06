@@ -69,7 +69,11 @@ class Seq2seqPostprocessor(Postprocessor):
                     fixed_batch.append(text)
 
             batch = [{"source": text} for text in fixed_batch]
-            predictions = self._predictor.predict_batch_json(batch)
+            try:
+                predictions = self._predictor.predict_batch_json(batch)
+            except ValueError:
+                from pprint import pprint
+                pprint(batch)
             pred_text = [''.join(pred['predicted_tokens'][0]) for pred in predictions]
             pred_texts.extend(pred_text)
         return pred_texts
