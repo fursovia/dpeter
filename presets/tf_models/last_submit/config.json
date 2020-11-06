@@ -22,7 +22,7 @@
                 "archive_path": "presets/seq2seq.tar.gz",
                 "beam_size": 3,
                 "type": "seq2seq",
-                "batch_size": 2048
+                "batch_size": 256
             }
         ]
     },
