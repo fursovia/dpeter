@@ -15,25 +15,25 @@ local target_namespace = "target_tokens";
           "token_embedders": {
             "tokens": {
               "type": "embedding",
-              "embedding_dim": 128,
+              "embedding_dim": 32,
               "vocab_namespace": "tokens"
             }
           }
         },
         "encoder": {
           "type": "lstm",
-          "input_size": 128,
-          "hidden_size": 256,
+          "input_size": 32,
+          "hidden_size": 64,
           "num_layers": 1,
           "dropout": 0.1,
           "bidirectional": false
         },
         "attention": {
             "type": "bilinear",
-            "vector_dim": 256,
-            "matrix_dim": 256,
+            "vector_dim": 64,
+            "matrix_dim": 64,
         },
-        "target_embedding_dim": 128,
+        "target_embedding_dim": 64,
         "beam_size": 1,
         "max_decoding_steps": 80,
     },
