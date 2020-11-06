@@ -1,4 +1,5 @@
 from typing import List, Optional
+import itertools
 
 import numpy as np
 
@@ -22,7 +23,7 @@ class TfPredictor:
         self._batch_size = batch_size
 
     def predict(self, images: np.ndarray) -> List[List[str]]:
-        predicts, probabilities = self._model.predict(
+        predictions, probabilities = self._model.predict(
             images,
             batch_size=self._batch_size,
             ctc_decode=True,
@@ -31,19 +32,21 @@ class TfPredictor:
             use_multiprocessing=True,
             workers=5,
         )
-        predicts = [[self._tokenizer.decode(y) for y in x] for x in predicts]
+        predictions = [[self._tokenizer.decode(y) for y in x] for x in predictions]
 
         if self._postprocessor is not None:
             print("postprocessing using seq2seq ...")
-            predicts = [p[0] for p in predicts]
-            preds = self._postprocessor.postprocess(predicts)
-            preds = [[p] for p in preds]
-            return preds
+            num_paths = len(predictions[0])
+            unraveled_predictions = list(itertools.chain(*predictions))
+            unraveled_predictions = self._postprocessor.postprocess(unraveled_predictions)
 
-            # postprocessed_predicts = []
-            # for preds in predicts:
-            #     preds = self._postprocessor.postprocess(preds)
-            #     postprocessed_predicts.append(preds)
-            # return postprocessed_predicts
+            raveled_preds = []
+            for i in range(len(unraveled_predictions) // num_paths):
+                example_preds = []
+                for j in range(num_paths):
+                    example_preds.append(unraveled_predictions[i + j])
+                raveled_preds.append(example_preds)
 
-        return predicts
+            return raveled_preds
+
+        return predictions
