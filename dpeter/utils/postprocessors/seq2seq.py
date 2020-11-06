@@ -60,7 +60,15 @@ class Seq2seqPostprocessor(Postprocessor):
         indices = range(0, len(texts), self._batch_size)
         for index in indices:
             batch = texts[index: index + self._batch_size]
-            batch = [{"source": text} for text in batch]
+
+            fixed_batch = []
+            for text in batch:
+                if not text:
+                    fixed_batch.append(" ")
+                else:
+                    fixed_batch.append(text)
+
+            batch = [{"source": text} for text in fixed_batch]
             predictions = self._predictor.predict_batch_json(batch)
             pred_text = [''.join(pred['predicted_tokens'][0]) for pred in predictions]
             pred_texts.extend(pred_text)
