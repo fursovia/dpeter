@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import shutil
 from typing import List
+from tqdm import tqdm
 
 from allennlp_models.generation.predictors import Seq2SeqPredictor
 from allennlp.models.archival import _load_dataset_readers, _load_model, get_weights_path, Archive, extracted_archive
@@ -58,7 +59,7 @@ class Seq2seqPostprocessor(Postprocessor):
 
         pred_texts = []
         indices = range(0, len(texts), self._batch_size)
-        for index in indices:
+        for index in tqdm(indices):
             batch = texts[index: index + self._batch_size]
 
             fixed_batch = []
@@ -69,11 +70,7 @@ class Seq2seqPostprocessor(Postprocessor):
                     fixed_batch.append(text)
 
             batch = [{"source": text} for text in fixed_batch]
-            try:
-                predictions = self._predictor.predict_batch_json(batch)
-            except ValueError:
-                from pprint import pprint
-                pprint(batch)
+            predictions = self._predictor.predict_batch_json(batch)
             pred_text = [''.join(pred['predicted_tokens'][0]) for pred in predictions]
             pred_texts.extend(pred_text)
         return pred_texts
