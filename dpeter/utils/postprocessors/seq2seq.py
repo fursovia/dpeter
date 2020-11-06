@@ -16,7 +16,7 @@ from dpeter.utils.postprocessors.postprocessor import Postprocessor
 class Seq2seqPostprocessor(Postprocessor):
 
     # TODO: add batches
-    def __init__(self, archive_path: str, beam_size: int = 10, cuda_device: int = -1, batch_size: int = 32) -> None:
+    def __init__(self, archive_path: str, beam_size: int = 10, cuda_device: int = 0, batch_size: int = 512) -> None:
 
         resolved_archive_path = cached_path(archive_path, cache_dir="presets")
 
