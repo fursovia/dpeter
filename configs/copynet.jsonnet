@@ -39,14 +39,14 @@ local target_namespace = "target_tokens";
     },
     "data_loader": {
         "shuffle": true,
-        "batch_size": 512,
+        "batch_size": 2048,
         "num_workers": 0,
-        "batches_per_epoch": 1400,
+        "batches_per_epoch": 1000,
         "pin_memory": true
     },
     "validation_data_loader": {
         "shuffle": false,
-        "batch_size": 256,
+        "batch_size": 2048,
         "num_workers": 0,
         "pin_memory": true
     },
