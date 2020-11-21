@@ -50,10 +50,22 @@ local target_namespace = "target_tokens";
         "num_workers": 0,
         "pin_memory": true
     },
+    "distributed": {
+//        "master_address": "127.0.0.1",
+//        "master_port": 29502,
+//        "num_nodes": 1,
+        "cuda_devices": [
+          0,
+          1,
+          3,
+          4,
+          5
+        ]
+  },
     "trainer": {
         "num_epochs": 300,
         "patience": 2,
-        "cuda_device": 0,
+//        "cuda_device": 0,
         "optimizer": {
           "type": "adam",
           "lr": 0.001
