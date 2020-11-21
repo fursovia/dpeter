@@ -46,14 +46,16 @@ class Dataset:
                 self.dataset[partition]['gt'][i] = str(text).encode()
 
             results = []
+            gt = []
             print(f"Partition: {partition}")
-            for path in tqdm(self.dataset[partition]['dt']):
+            for i, path in enumerate(tqdm(self.dataset[partition]['dt'])):
                 img = load_image(str(path))
                 img = self.preprocessor.preprocess(img)
                 if img is None:
                     continue
                 results.append(img)
-
+                gt.append(self.dataset[partition]['gt'][i])
+            self.dataset[partition]['gt'] = gt
             self.dataset[partition]['dt'] = results
 
     def _dpeter(self):
