@@ -39,21 +39,33 @@ local target_namespace = "target_tokens";
     },
     "data_loader": {
         "shuffle": true,
-        "batch_size": 512,
+        "batch_size": 2048,
         "num_workers": 0,
-        "batches_per_epoch": 1400,
+        "batches_per_epoch": 1000,
         "pin_memory": true
     },
     "validation_data_loader": {
         "shuffle": false,
-        "batch_size": 256,
+        "batch_size": 2048,
         "num_workers": 0,
         "pin_memory": true
     },
+    "distributed": {
+//        "master_address": "127.0.0.1",
+//        "master_port": 29502,
+//        "num_nodes": 1,
+        "cuda_devices": [
+          0,
+          1,
+          3,
+          4,
+          5
+        ]
+  },
     "trainer": {
         "num_epochs": 300,
         "patience": 2,
-        "cuda_device": 0,
+//        "cuda_device": 0,
         "optimizer": {
           "type": "adam",
           "lr": 0.001
