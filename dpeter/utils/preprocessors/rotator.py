@@ -49,7 +49,7 @@ class Flipper(Preprocessor):
         self._model.load_checkpoint('presets/flipper.hdf5')
 
     def preprocess(self, image: np.ndarray) -> np.ndarray:
-        res = self._model.predict(image[None])
+        res = self._model.predict(image[None, ..., None] / 255.0)
         if res < 0.5:
             return image[:, ::-1]
         return image
