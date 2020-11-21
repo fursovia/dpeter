@@ -15,7 +15,7 @@ from dpeter.utils.augmentators.augmentator import Augmentator, NullAugmentator
 class DataGenerator:
     """Generator class with data streaming"""
 
-    def __init__(self, source, batch_size, charset, max_text_length, augmentator: Augmentator = None, predict=False):
+    def __init__(self, source, batch_size, charset, max_text_length, augmentator: Augmentator = None, predict=False, train_flips=False):
         self.tokenizer = Tokenizer(charset, max_text_length)
         self.batch_size = batch_size
         self.partitions = ['test'] if predict else ['train', 'valid']
@@ -25,6 +25,8 @@ class DataGenerator:
         self.steps = dict()
         self.index = dict()
         self.dataset = dict()
+
+        self.train_flips = train_flips
 
         with h5py.File(source, "r") as f:
             for pt in self.partitions:
@@ -63,6 +65,13 @@ class DataGenerator:
             y_train = [np.pad(y, (0, self.tokenizer.maxlen - len(y))) for y in y_train]
             y_train = np.asarray(y_train, dtype=np.int16)
 
+            if self.train_flips:
+                if np.random.uniform() > 0.5:
+                    y_train = np.array([1], dtype=np.int32)
+                else:
+                    x_train = x_train[:, :, ::-1]
+                    y_train = np.array([0], dtype=np.int32)
+
             yield (x_train, y_train)
 
     def next_valid_batch(self):
@@ -84,6 +93,13 @@ class DataGenerator:
             y_valid = [self.tokenizer.encode(y) for y in self.dataset['valid']['gt'][index:until]]
             y_valid = [np.pad(y, (0, self.tokenizer.maxlen - len(y))) for y in y_valid]
             y_valid = np.asarray(y_valid, dtype=np.int16)
+
+            if self.train_flips:
+                if np.random.uniform() > 0.5:
+                    y_valid = np.array([1], dtype=np.int32)
+                else:
+                    x_valid = x_valid[:, :, ::-1]
+                    y_valid = np.array([0], dtype=np.int32)
 
             yield (x_valid, y_valid)
 

@@ -15,4 +15,6 @@ class ComposePreprocessor(Preprocessor):
 
         for preprocessor in self._preprocessors:
             image = preprocessor.preprocess(image)
+            if image is None:
+                return None
         return image

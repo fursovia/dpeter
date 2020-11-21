@@ -61,7 +61,8 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
         charset=CHARSET,
         max_text_length=MAX_LENGTH,
         augmentator=Augmentator.from_params(params["dataset_reader"]["augmentator"]),
-        predict=False
+        predict=False,
+        train_flips=params.get("train_flips", False),
     )
 
     model = HTRModel(
@@ -70,7 +71,8 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
         vocab_size=dtgen.tokenizer.vocab_size,
         beam_width=params["model"]["beam_size"],
         stop_tolerance=params["training"]["patience"],
-        reduce_tolerance=params["training"]["lr_patience"]
+        reduce_tolerance=params["training"]["lr_patience"],
+        train_flips=params.get("train_flips", False),
     )
 
     model.compile(learning_rate=params["training"]["learning_rate"])
@@ -134,7 +136,7 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
         x=dtgen.next_valid_batch(),
         steps=dtgen.steps['valid'],
         ctc_decode=True,
-        verbose=1
+        verbose=1,
     )
     predicts = [dtgen.tokenizer.decode(x[0]) for x in predicts]
 

@@ -42,7 +42,8 @@ class HTRModel:
                  beam_width=10,
                  top_paths=1,
                  stop_tolerance=20,
-                 reduce_tolerance=15):
+                 reduce_tolerance=15,
+                 train_flips=False):
         """
         Initialization of a HTR Model.
 
@@ -55,6 +56,7 @@ class HTRModel:
         self.architecture = globals()[architecture]
         self.input_size = input_size
         self.vocab_size = vocab_size
+        self.train_flips = train_flips
 
         self.model = None
         self.greedy = greedy
@@ -130,7 +132,7 @@ class HTRModel:
         """
 
         # define inputs, outputs and optimizer of the chosen architecture
-        inputs, outputs = self.architecture(self.input_size, self.vocab_size + 1)
+        inputs, outputs = self.architecture(self.input_size, self.vocab_size + 1, self.train_flips)
 
         if learning_rate is None:
             learning_rate = CustomSchedule(d_model=self.vocab_size + 1, initial_step=initial_step)
@@ -142,7 +144,10 @@ class HTRModel:
 
         # create and compile
         self.model = Model(inputs=inputs, outputs=outputs)
-        self.model.compile(optimizer=optimizer, loss=self.ctc_loss_lambda_func)
+        if not self.train_flips:
+            self.model.compile(optimizer=optimizer, loss=self.ctc_loss_lambda_func)
+        else:
+            self.model.compile(optimizer=optimizer, loss=self.binary_cross_entropy_loss_lambda_func)
 
     def fit(self,
             x=None,
@@ -215,7 +220,7 @@ class HTRModel:
                                  callbacks=callbacks, max_queue_size=max_queue_size,
                                  workers=workers, use_multiprocessing=use_multiprocessing)
 
-        if not ctc_decode:
+        if not ctc_decode or self.train_flips:
             return np.log(out.clip(min=1e-8)), []
 
         steps_done = 0
@@ -276,6 +281,9 @@ class HTRModel:
 
         return loss
 
+    @staticmethod
+    def binary_cross_entropy_loss_lambda_func(y_true, y_pred):
+        return tf.keras.losses.binary_crossentropy(y_true, y_pred)
 
 """
 Custom Schedule
@@ -430,7 +438,7 @@ def puigcerver(input_size, d_model):
     return (input_data, output_data)
 
 
-def flor(input_size, d_model):
+def flor(input_size, d_model, train_flips=False):
     """
     Gated Convolucional Recurrent Neural Network by Flor et al.
     """
@@ -471,6 +479,22 @@ def flor(input_size, d_model):
 
     cnn = MaxPooling2D(pool_size=(1, 2), strides=(1, 2), padding="valid")(cnn)
 
+    if train_flips:
+        cnn = Conv2D(filters=64, kernel_size=(3, 3), strides=(2, 1), padding="same", kernel_initializer="he_uniform")(cnn)
+        cnn = PReLU(shared_axes=[1, 2])(cnn)
+        cnn = BatchNormalization(renorm=True)(cnn)
+
+        cnn = Conv2D(filters=64, kernel_size=(3, 3), strides=(2, 1), padding="same", kernel_initializer="he_uniform")(cnn)
+        cnn = PReLU(shared_axes=[1, 2])(cnn)
+        cnn = BatchNormalization(renorm=True)(cnn)
+
+        shape = cnn.get_shape()
+        cnn = Reshape((shape[1] * shape[2] * shape[3],))(cnn)
+
+        output_data = Dense(units=1, activation='sigmoid')(cnn)
+        return (input_data, output_data)
+
+        
     shape = cnn.get_shape()
     bgru = Reshape((shape[1], shape[2] * shape[3]))(cnn)
 

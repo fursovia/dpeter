@@ -50,6 +50,8 @@ class Dataset:
             for path in tqdm(self.dataset[partition]['dt']):
                 img = load_image(str(path))
                 img = self.preprocessor.preprocess(img)
+                if img is None:
+                    continue
                 results.append(img)
 
             self.dataset[partition]['dt'] = results
