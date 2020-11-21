@@ -6,6 +6,7 @@
                 "basic_rotator",
                 "basic_resizer",
                 "null_binarizer",
+                "smart_flipper",
             ]
         },
         "augmentator": "flor",

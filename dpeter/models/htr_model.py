@@ -220,7 +220,10 @@ class HTRModel:
                                  callbacks=callbacks, max_queue_size=max_queue_size,
                                  workers=workers, use_multiprocessing=use_multiprocessing)
 
-        if not ctc_decode or self.train_flips:
+        if self.train_flips:
+            return out
+
+        if not ctc_decode:
             return np.log(out.clip(min=1e-8)), []
 
         steps_done = 0
