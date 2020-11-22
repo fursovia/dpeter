@@ -1,4 +1,5 @@
 {
+    "is_bentam": false,
     "dataset_reader": {
         "preprocessor": {
             "type": "compose",
@@ -16,7 +17,7 @@
         "beam_size": 50,
     },
     "training": {
-        "num_epochs": 300,
+        "num_epochs": 150,
         "batch_size": 8,
         "learning_rate": 0.001,
         "patience": 20,
