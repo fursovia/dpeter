@@ -1,4 +1,5 @@
 {
+    "is_bentam": false,
     "dataset_reader": {
         "preprocessor": {
             "type": "compose",
