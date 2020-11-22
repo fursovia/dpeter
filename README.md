@@ -1,4 +1,13 @@
-# dpeter
+# Digital Peter: Recognition of Peter the Great’s manuscripts
+
+[Digital Peter](https://ods.ai/tracks/aij2020/) is an educational task with a historical slant created on the basis
+ of several AI technologies (Computer Vision, NLP, and knowledge graphs). 
+ The task was prepared jointly with the Saint Petersburg Institute of History 
+ (N.P.Lihachov mansion) of Russian Academy of Sciences, Federal Archival 
+ Agency of Russia and Russian State Archive of Ancient Acts.
+
+
+Install requirements
 
 ```bash
 poetry install
@@ -32,6 +41,3 @@ CUDA_VISIBLE_DEVICES="0" train configs/lc_base.jsonnet
 bash bin/create_submit.sh
 ```
 
-
-
-docker run -v ${PWD}:/notebook fursovia/dpeter /bin/bash -c "export PYTHONPATH=. && python dpeter/commands/tf_predict.py ./presets/tf_models/last_submit --data-dir valid_images --out-path valid_out"

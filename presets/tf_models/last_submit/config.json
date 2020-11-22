@@ -13,12 +13,12 @@
     },
     "model": {
         "type": "flor",
-        "beam_size": 10
+        "beam_size": 20
     },
     "data_dir": "data",
     "postprocessor": {
         "type": "compose",
-        "postprocessors": ["symspell"]
+        "postprocessors": []
     },
     "serialization_dir": "logs/133048-0411",
     "training": {
