@@ -90,9 +90,7 @@ class Dataset:
             data_path = os.path.join(self.data_dir, 'Partitions', f'{partition}Lines.lst')
             data = load_lst_lines(data_path)
 
-            i = 0
             for filename in data:
-                i += 1
                 image_path = os.path.join(self.data_dir, 'Images/Lines', f'{filename}.png')
                 words_path = os.path.join(self.data_dir, 'Transcriptions', f'{filename}.txt')
 
@@ -103,8 +101,6 @@ class Dataset:
                 else:
                     dataset['valid']['gt'].append(text)
                     dataset['valid']['dt'].append(image_path)
-                if i == 100:
-                    break
 
         return dataset
 
