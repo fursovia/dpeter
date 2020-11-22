@@ -85,7 +85,7 @@ class HTRModel:
             if self.model is None:
                 self.compile()
 
-            self.model.load_weights(target)
+            self.model.load_weights(target, by_name=True)
 
     def get_callbacks(self, logdir, checkpoint, monitor="val_loss", verbose=0):
         """Setup the list of callbacks for the model"""
@@ -505,7 +505,7 @@ def flor(input_size, d_model, train_flips=False):
     bgru = Dense(units=256)(bgru)
 
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(bgru)
-    output_data = Dense(units=d_model, activation="softmax")(bgru)
+    output_data = Dense(units=d_model, activation="softmax", name=f"{d_model}_layer")(bgru)
 
     return (input_data, output_data)
 
