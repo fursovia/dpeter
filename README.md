@@ -10,7 +10,7 @@ exit
 
 ```bash
 create_dataset configs/htr_base.jsonnet --data-dir ./data
-CUDA_VISIBLE_DEVICES="3" tf_train configs/htr_base.jsonnet ./data
+CUDA_VISIBLE_DEVICES="5" tf_train configs/finetune.jsonnet ./data
 ```
 
 ## Aling letters

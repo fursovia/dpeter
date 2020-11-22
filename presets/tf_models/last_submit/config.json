@@ -18,7 +18,7 @@
     "data_dir": "data",
     "postprocessor": {
         "type": "compose",
-        "postprocessors": []
+        "postprocessors": ["symspell"]
     },
     "serialization_dir": "logs/133048-0411",
     "training": {
