@@ -55,16 +55,18 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
 
     source_path = data_dir / "data.hdf5"
 
-
     if params["is_bentam"]:
         charset = BENTAM_CHARSET
+        maxlen = 110
     else:
         charset = CHARSET
+        maxlen = MAX_LENGTH
+
     dtgen = DataGenerator(
         source=str(source_path),
         batch_size=params["training"]["batch_size"],
         charset=charset,
-        max_text_length=MAX_LENGTH,
+        max_text_length=maxlen,
         augmentator=Augmentator.from_params(params["dataset_reader"]["augmentator"]),
         predict=False,
         train_flips=params.get("train_flips", False),
