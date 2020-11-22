@@ -32,3 +32,4 @@ RUN pip install poetry \
 # RUN git clone https://github.com/FilatovArtm/DeslantImg.git /home/DeslantImg && cd /home/DeslantImg && ./build.sh && cd ..
 
 RUN apt update -y && apt install libgl1-mesa-glx -y
+RUN pip install symspellpy
