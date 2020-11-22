@@ -18,12 +18,7 @@
     "data_dir": "data",
     "postprocessor": {
         "type": "compose",
-<<<<<<< HEAD
-        "postprocessors": [
-        ]
-=======
         "postprocessors": []
->>>>>>> 9fefdbc978a211fdf1ffcf7fde4f3e82f9e6c0ea
     },
     "serialization_dir": "logs/133048-0411",
     "training": {
