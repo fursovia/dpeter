@@ -83,6 +83,7 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
     )
 
     model.compile(learning_rate=params["training"]["learning_rate"])
+    model.load_checkpoint('presets/bentam.hdf5')
     checkpoint_path = str(serialization_dir / "checkpoint_weights.hdf5")
     # can be used as a pretrained model (save for later)
     # model.load_checkpoint(target=checkpoint_path)
