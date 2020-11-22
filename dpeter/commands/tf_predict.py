@@ -44,11 +44,12 @@ def main(
         input_size=INPUT_SIZE,
         vocab_size=len(CHARSET) + 2,
         beam_width=beam_size,
-        top_paths=top_paths
+        top_paths=top_paths,
+        pretrained=params.get('pretrained', False),
     )
 
     model.compile()
-    model.load_checkpoint(target=str(serialization_dir / "checkpoint_weights.hdf5"))
+    model.load_checkpoint(target=str(serialization_dir / "checkpoint_weights.hdf5"), by_name=False)
 
     preprocessor = Preprocessor.from_params(params["dataset_reader"]["preprocessor"])
     images = []

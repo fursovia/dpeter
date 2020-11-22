@@ -43,7 +43,8 @@ class HTRModel:
                  top_paths=1,
                  stop_tolerance=20,
                  reduce_tolerance=15,
-                 train_flips=False):
+                 train_flips=False,
+                 pretrained=True):
         """
         Initialization of a HTR Model.
 
@@ -57,6 +58,7 @@ class HTRModel:
         self.input_size = input_size
         self.vocab_size = vocab_size
         self.train_flips = train_flips
+        self.pretrained = pretrained
 
         self.model = None
         self.greedy = greedy
@@ -78,15 +80,16 @@ class HTRModel:
                 with redirect_stdout(f):
                     self.model.summary()
 
-    def load_checkpoint(self, target):
+    def load_checkpoint(self, target, by_name=True):
         """ Load a model with checkpoint file"""
 
         if os.path.isfile(target):
             if self.model is None:
                 self.compile()
-
-            self.model.load_weights(target, by_name=True)
-
+            if by_name:
+                self.model.load_weights(target, by_name=True)
+            else:
+                self.model.load_weights(target)
     def get_callbacks(self, logdir, checkpoint, monitor="val_loss", verbose=0):
         """Setup the list of callbacks for the model"""
 
@@ -132,7 +135,7 @@ class HTRModel:
         """
 
         # define inputs, outputs and optimizer of the chosen architecture
-        inputs, outputs = self.architecture(self.input_size, self.vocab_size + 1, self.train_flips)
+        inputs, outputs = self.architecture(self.input_size, self.vocab_size + 1, self.train_flips, self.pretrained)
 
         if learning_rate is None:
             learning_rate = CustomSchedule(d_model=self.vocab_size + 1, initial_step=initial_step)
@@ -441,7 +444,7 @@ def puigcerver(input_size, d_model):
     return (input_data, output_data)
 
 
-def flor(input_size, d_model, train_flips=False):
+def flor(input_size, d_model, train_flips=False, pretrained=True):
     """
     Gated Convolucional Recurrent Neural Network by Flor et al.
     """
@@ -505,7 +508,10 @@ def flor(input_size, d_model, train_flips=False):
     bgru = Dense(units=256)(bgru)
 
     bgru = Bidirectional(GRU(units=128, return_sequences=True, dropout=0.5))(bgru)
-    output_data = Dense(units=d_model, activation="softmax", name=f"{d_model}_layer")(bgru)
+    if pretrained:
+        output_data = Dense(units=d_model, activation="softmax", name=f"{d_model}_layer")(bgru)
+    else:
+        output_data = Dense(units=d_model, activation="softmax")(bgru)
 
     return (input_data, output_data)
 

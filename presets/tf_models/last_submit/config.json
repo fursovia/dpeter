@@ -19,12 +19,6 @@
     "postprocessor": {
         "type": "compose",
         "postprocessors": [
-            {
-                "archive_path": "presets/seq2seq.tar.gz",
-                "beam_size": 3,
-                "type": "seq2seq",
-                "batch_size": 256
-            }
         ]
     },
     "serialization_dir": "logs/133048-0411",
