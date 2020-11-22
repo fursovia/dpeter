@@ -32,3 +32,6 @@ CUDA_VISIBLE_DEVICES="0" train configs/lc_base.jsonnet
 bash bin/create_submit.sh
 ```
 
+
+
+docker run -v ${PWD}:/notebook fursovia/dpeter /bin/bash -c "export PYTHONPATH=. && python dpeter/commands/tf_predict.py ./presets/tf_models/last_submit --data-dir valid_images --out-path valid_out"
