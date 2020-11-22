@@ -9,7 +9,7 @@ import editdistance
 import numpy as np
 from allennlp.common import Params
 
-from dpeter.constants import PROJECT_NAME, CHARSET, MAX_LENGTH, INPUT_SIZE
+from dpeter.constants import PROJECT_NAME, CHARSET, MAX_LENGTH, INPUT_SIZE, BENTAM_CHARSET
 from dpeter.utils.generator import DataGenerator
 from dpeter.models.htr_model import HTRModel
 from dpeter.utils.metrics import ocr_metrics
@@ -55,10 +55,15 @@ def main(config_path: Path, data_dir: Path, serialization_dir: Optional[Path] = 
 
     source_path = data_dir / "data.hdf5"
 
+
+    if params["is_bentam"]:
+        charset = BENTAM_CHARSET
+    else:
+        charset = CHARSET
     dtgen = DataGenerator(
         source=str(source_path),
         batch_size=params["training"]["batch_size"],
-        charset=CHARSET,
+        charset=charset,
         max_text_length=MAX_LENGTH,
         augmentator=Augmentator.from_params(params["dataset_reader"]["augmentator"]),
         predict=False,

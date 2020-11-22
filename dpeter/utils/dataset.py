@@ -12,16 +12,19 @@ from dpeter.utils.data import load_jsonlines, load_text, load_image
 class Dataset:
     """Dataset class to read images and sentences from base (raw files)"""
 
-    def __init__(self, data_dir: str, preprocessor: Preprocessor):
+    def __init__(self, data_dir: str, preprocessor: Preprocessor, bertam=False):
         self.data_dir = data_dir
         self.preprocessor = preprocessor
         self.dataset = None
+        self.bertam = bertam
         self.partitions = ['train', 'valid']
 
     def read(self):
         """Read images and sentences from dataset"""
-
-        dataset = self._dpeter()
+        if not self.bertam:
+            dataset = self._dpeter()
+        else:
+            dataset = self._bertam()
 
         if not self.dataset:
             self.dataset = dict()
@@ -77,3 +80,35 @@ class Dataset:
                 dataset[partition]['dt'].append(image_path)
 
         return dataset
+
+    def _bertam(self):
+        dataset = dict()
+        for i in self.partitions:
+            dataset[i] = {"dt": [], "gt": []}
+
+        for partition in ['Train', 'Validation']:
+            data_path = os.path.join(self.data_dir, 'Partitions', f'{partition}Lines.lst')
+            data = load_lst_lines(data_path)
+
+            i = 0
+            for filename in data:
+                i += 1
+                image_path = os.path.join(self.data_dir, 'Images/Lines', f'{filename}.png')
+                words_path = os.path.join(self.data_dir, 'Transcriptions', f'{filename}.txt')
+
+                text = load_text(words_path).strip()
+                if partition == 'Train':
+                    dataset['train']['gt'].append(text)
+                    dataset['train']['dt'].append(image_path)
+                else:
+                    dataset['valid']['gt'].append(text)
+                    dataset['valid']['dt'].append(image_path)
+                if i == 100:
+                    break
+
+        return dataset
+
+def load_lst_lines(file):
+    with open(file) as f:
+        res = [line.strip() for line in f.readlines()]
+    return res

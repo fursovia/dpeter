@@ -15,7 +15,7 @@ def main(config_path: Path, data_dir: str = "./data"):
     params = Params.from_file(str(config_path))
     preprocessor = Preprocessor.from_params(params["dataset_reader"]["preprocessor"])
 
-    ds = Dataset(data_dir=data_dir, preprocessor=preprocessor)
+    ds = Dataset(data_dir=data_dir, preprocessor=preprocessor, bertam=params.get("is_bentam", False))
     ds.read()
 
     print("Partitions will be saved...")

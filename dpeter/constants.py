@@ -7,5 +7,6 @@ WHITE_CONSTANT = 255
 VALUES_ABOVE_THIS_ARE_ALSO_WHITE = 230
 PROJECT_NAME = "dpeter"
 CHARSET = " оаетнисрлвдкмпубiѣяычгзъжхшйюфц1ь+щ[0]27345э8erps96tfіhcn⊕m⊗daglb)–|×o/kuǂ…"
+BENTAM_CHARSET = ' !"#&\'()*+,-./0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXY[]_abcdefghijklmnopqrstuvwxyz|£§àâèéê⊥'
 MAX_LENGTH = 80
 INPUT_SIZE = (WIDTH, HEIGHT, 1)
